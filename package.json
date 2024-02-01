@@ -1,0 +1,15 @@
+{
+  "name": "frontendtitan-website",
+  "version": "1.0.0",
+  "description": "The website for the FrontendTitan YouTube Channel",
+  "main": "dist/main.ts",
+  "scripts": {
+    "start": "powershell.exe .\\start.ps1"
+  },
+  "author": "FrontendTitan",
+  "license": "ISC",
+  "devDependencies": {
+    "node-sass": "^9.0.0",
+    "typescript": "^5.3.3"
+  }
+}
