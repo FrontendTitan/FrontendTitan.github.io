@@ -1,0 +1,50 @@
+/**
+ * Global styles for each file in the project
+ *
+ * Must be in all files, to make the 
+ * cool background work   
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500&display=swap');
+
+* {
+    color-scheme: dark !important;
+    font-family: 'Roboto', sans-serif;
+    font-size: 300;
+    font-weight: 300;
+    color: white;
+    margin: 0;
+    user-select: none;
+    scroll-behavior: smooth;
+    z-index: 1;
+}
+
+body {
+    background-color: #0e0e0e;
+    color: white;
+    height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    height: 100%;
+    width: 100%;
+    max-width: 1300px;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}

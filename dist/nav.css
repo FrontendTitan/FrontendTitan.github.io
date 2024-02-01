@@ -1,0 +1,60 @@
+/**
+ * @file nav.scss
+ * Styles for nav component, that will be 
+ * used throughout each page.
+ */
+/* Styles for desktops and laptops */
+@media only screen and (min-width: 1024px) {
+  nav {
+    width: calc(100% - 34px);
+    max-width: 1300px;
+    height: 70px;
+    margin: 16px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    transition: all 0.1s ease-in-out; }
+    nav div {
+      display: flex; }
+    nav div:nth-of-type(2) {
+      margin-right: 20px; }
+    nav h1 {
+      font-size: 30px;
+      font-weight: 500;
+      margin: 0;
+      padding: 0;
+      margin-left: 16px;
+      margin-top: 16px; }
+    nav h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin: 0;
+      padding: 0;
+      margin-left: 16px;
+      margin-top: 25px;
+      transition: all 0.1s ease-in-out;
+      height: 25px; }
+    nav h2:hover {
+      cursor: pointer;
+      color: #ff0000;
+      scale: 1.05; }
+    nav h2:active {
+      color: #ff0000;
+      scale: 0.9; }
+    nav img {
+      height: 30px;
+      margin-top: 20px;
+      margin-left: 13px;
+      filter: invert(1);
+      transition: all 0.1s ease-in-out; }
+    nav img:hover {
+      cursor: pointer;
+      border-radius: 100%;
+      scale: 1.05;
+      border: 1px solid turquoise;
+      background-color: turquoise; }
+    nav img:active {
+      scale: 0.9; } }
+
+/* Styles for tablets */
+/* Styles for mobile phones */

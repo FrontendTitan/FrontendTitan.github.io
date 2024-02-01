@@ -1,0 +1,87 @@
+/**
+ * @file nav.scss
+ * Styles for nav component, that will be 
+ * used throughout each page.
+ */
+
+/* Styles for desktops and laptops */
+@media only screen and (min-width: 1024px) {
+    nav {
+        width: calc(100% - 34px);
+        max-width: 1300px;
+        height: 70px;
+        margin: 16px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+
+        transition: all 0.1s ease-in-out;
+
+        div {
+            display: flex;
+        }
+
+        div:nth-of-type(2) {
+            margin-right: 20px;
+        }
+
+        h1 {
+            font-size: 30px;
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+            margin-left: 16px;
+            margin-top: 16px;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 500;
+            margin: 0;
+            padding: 0;
+            margin-left: 16px;
+            margin-top: 25px;
+            transition: all 0.1s ease-in-out;
+            height: 25px;
+        }
+
+        h2:hover {
+            cursor: pointer;
+            color: #ff0000;
+            scale: 1.05;
+        }
+
+        h2:active {
+            color: #ff0000;
+            scale: 0.9;
+        }
+
+        img {
+            height: 30px;
+            margin-top: 20px;
+            margin-left: 13px;
+            filter: invert(1);
+            transition: all 0.1s ease-in-out;
+        }
+
+        img:hover {
+            cursor: pointer;
+            border-radius: 100%;
+            scale: 1.05;
+
+            // Because of filter, they become red
+            border: 1px solid turquoise;
+            background-color: turquoise;
+        }
+
+        img:active {
+            scale: 0.9;
+        }
+    }
+}
+
+/* Styles for tablets */
+@media only screen and (min-width: 768px) and (max-width: 1024px) {}
+
+/* Styles for mobile phones */
+@media only screen and (max-width: 768px) {}
