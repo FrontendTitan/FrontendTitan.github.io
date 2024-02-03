@@ -20,3 +20,15 @@ document.querySelector('.mobile-nav-button').addEventListener('click', () => {
     });
     isNavActive = !isNavActive;
 });
+// If the window is resized and its over 700px, show the navbar
+window.addEventListener('resize', () => {
+    isNavActive = false;
+    if (window.innerWidth > 700) {
+        document.getElementById('mobile-buttons-display').style.display = 'flex';
+        document.getElementById('mobile-socials-display').style.display = 'flex';
+    }
+    else {
+        document.getElementById('mobile-buttons-display').style.display = 'none';
+        document.getElementById('mobile-socials-display').style.display = 'none';
+    }
+});

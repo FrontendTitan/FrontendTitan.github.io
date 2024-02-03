@@ -32,6 +32,18 @@
             padding: 0;
             margin-left: 16px;
             margin-top: 16px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        h1:hover {
+            cursor: pointer;
+            color: rgb(20, 109, 168);
+            scale: 1.05;
+        }
+
+        h1:active {
+            color: rgb(20, 109, 168);
+            scale: 0.9;
         }
 
         h2 {
@@ -107,6 +119,11 @@
             margin-top: 7px;
             font-weight: 500;
             margin-right: 10px;
+            transition: all 0.1s ease-in-out;
+        }
+
+        h1:active {
+            color: rgb(20, 109, 168);
         }
     }
 

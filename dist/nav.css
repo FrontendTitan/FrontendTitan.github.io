@@ -24,7 +24,15 @@
       margin: 0;
       padding: 0;
       margin-left: 16px;
-      margin-top: 16px; }
+      margin-top: 16px;
+      transition: all 0.1s ease-in-out; }
+    nav h1:hover {
+      cursor: pointer;
+      color: #146da8;
+      scale: 1.05; }
+    nav h1:active {
+      color: #146da8;
+      scale: 0.9; }
     nav h2 {
       font-size: 20px;
       font-weight: 500;
@@ -73,7 +81,10 @@
     .mobile-flex-btn-title h1 {
       margin-top: 7px;
       font-weight: 500;
-      margin-right: 10px; }
+      margin-right: 10px;
+      transition: all 0.1s ease-in-out; }
+    .mobile-flex-btn-title h1:active {
+      color: #146da8; }
   .mobile-social-buttons {
     filter: invert(1); }
   #mobile-buttons-display {

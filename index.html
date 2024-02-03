@@ -14,6 +14,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src='/dist/background.js' defer></script>
+    <script src='/dist/nav.js' defer></script>
+    <script src='/dist/nav.mobile.js' defer></script>
 </head>
 
 <body>
@@ -23,17 +25,20 @@
                 <div> <!-- Title and main buttons div -->
                     <div class='mobile-flex-btn-title'>
                         <img src="/src/assets/list.svg" alt="Menu Button" class='mobile-nav-button'>
-                        <h1>FrontendTitan &hairsp; &hairsp;</h1>
+                        <h1 id='nav-home-logo-btn'>FrontendTitan &hairsp; &hairsp;</h1>
                     </div>
                     <div id='mobile-buttons-display'>
-                        <h2>Contact</h2>
-                        <h2>Projects</h2>
-                        <h2>Blog</h2>
+                        <h2 id='nav-home-btn'>Home</h2>
+                        <h2 id='nav-contact-btn'>Contact</h2>
+                        <h2 id='nav-projects-btn'>Projects</h2>
+                        <h2 id='nav-blog-btn'>Blog</h2>
                     </div>
                 </div>
                 <div id='mobile-socials-display'> <!-- Social Media Logos div -->
-                    <img src="/src/assets/github.svg" class='mobile-social-buttons' alt="">
-                    <img src="/src/assets/youtube.svg" class='mobile-social-buttons' alt="">
+                    <img src="/src/assets/github.svg" class='mobile-social-buttons' alt="GitHub Logo"
+                        id='github-nav-logo'>
+                    <img src="/src/assets/youtube.svg" class='mobile-social-buttons' alt="YouTube Logo"
+                        id='youtube-nav-logo'>
                 </div>
             </nav>
 
@@ -209,7 +214,5 @@
         </main>
     </div>
 </body>
-
-<script src='/dist/nav.mobile.js'></script>
 
 </html>

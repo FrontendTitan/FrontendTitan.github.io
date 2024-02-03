@@ -40,23 +40,26 @@ scene.add(stars)
 
 camera.position.z = 200
 
-var cameraSpeed = 0.06 // New variable for camera speed
+var cameraSpeed = 0.0001 // New variable for camera speed
 
 var animate = function () {
     requestAnimationFrame(animate)
 
     // Use the cameraSpeed variable to control the speed of the particles
-    camera.position.z -= cameraSpeed
+    camera.position.z += cameraSpeed
+    camera.position.y += cameraSpeed
+    camera.position.x -= cameraSpeed
 
-    // Add rotation to the camera
-    camera.rotation.y += 0.001
+    camera.rotation.y -= 0.0001
 
     // If the camera has moved past a certain point, reset the positions of the stars and the camera
-    if (camera.position.z < -50) {
+    if (camera.rotation.y < -1.9) {
         resetParticles()
         geometry.attributes.position.needsUpdate = true
         geometry.attributes.color.needsUpdate = true // Update the colors
+        camera.rotation.y = 1.5
         camera.position.z = 200
+        camera.position.y = 0
     }
 
     renderer.render(scene, camera)

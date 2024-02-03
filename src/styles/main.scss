@@ -143,6 +143,12 @@
     }
 }
 
+@media only screen and (max-width: 700px) {
+    .skills {
+        width: 80%;
+    }
+}
+
 .about-me {
     padding: 30px;
     animation: abtme-fadein 1s ease-in-out;
