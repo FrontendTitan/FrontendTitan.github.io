@@ -13,95 +13,203 @@
     <link rel="stylesheet" href="/dist/main.js">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src='/dist/background.js' defer></script>
 </head>
 
 <body>
-    <main>
-        <!-- The canvas container goes inside, forming
-             the space effect -->
-        <div id="canvas-container"></div>
-        <div class="container">
-            <nav>
-                <div>
-                    <h1>FrontendTitan &hairsp; |&hairsp;</h1>
-                    <h2>About</h2>
-                    <h2>Projects</h2>
-                    <h2>Blog</h2>
-                    <h2>PS3 Game</h2>
+    <div class="container">
+        <main>
+            <nav> <!-- Navigation Bar -->
+                <div> <!-- Title and main buttons div -->
+                    <div class='mobile-flex-btn-title'>
+                        <img src="/src/assets/list.svg" alt="Menu Button" class='mobile-nav-button'>
+                        <h1>FrontendTitan &hairsp; &hairsp;</h1>
+                    </div>
+                    <div id='mobile-buttons-display'>
+                        <h2>Contact</h2>
+                        <h2>Projects</h2>
+                        <h2>Blog</h2>
+                    </div>
                 </div>
-                <div>
-                    <img src="/src/assets/github.svg" alt="">
-                    <img src="/src/assets/youtube.svg" alt="">
+                <div id='mobile-socials-display'> <!-- Social Media Logos div -->
+                    <img src="/src/assets/github.svg" class='mobile-social-buttons' alt="">
+                    <img src="/src/assets/youtube.svg" class='mobile-social-buttons' alt="">
                 </div>
             </nav>
-        </div>
-    </main>
+
+            <!-- Entry point of the website -->
+            <div class="body">
+                <div class='banner'>
+                    <img src="/src/assets/banner.png" alt="">
+                </div>
+
+                <div class="about-me">
+                    <h1>About Me</h1><br>
+                    <p>Hi, I'm Denis, also known as FrontendTitan. As a passionate and self-taught Web Developer, I have
+                        embarked on a programming journey at a young age. With dedication and continuous
+                        self-improvement, I have honed my skills to become proficient in various programming languages
+                        and technologies.</p><br>
+                    <p>Driven by my discipline for programming and, I have started a YouTube channel.
+                        Through my channel, I aim to provide entertaining and informative content about web
+                        development, software development, and other related topics.</p><br>
+                    <p>Join me on this exciting journey as we explore the world of coding together. Together, we can
+                        unlock the endless possibilities of software development and create amazing projects. Let's
+                        learn, grow, and build a vibrant community of developers.</p><br>
+                    <p>My goal is to inspire and educate
+                        individuals who are interested in pursuing a career in the tech industry. My videos are designed
+                        to be easily <i>watchable by non-coders</i>, making them accessible to a wider audience.</p>
+                </div>
+
+                <div class='skills'>
+                    <div>
+                        <h1>Programming Skills</h1>
+                        <div class="programming-skill">
+                            <div class='skill'> <!-- TS -->
+                                <div class='lang-info'>
+                                    <p>Typescript</p>
+                                    <p>90%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 90%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- JS -->
+                                <div class='lang-info'>
+                                    <p>Javascript</p>
+                                    <p>90%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 90%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- HTML -->
+                                <div class='lang-info'>
+                                    <p>HTML</p>
+                                    <p>87%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 87%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- CSS/SCSS -->
+                                <div class='lang-info'>
+                                    <p>CSS/SCSS</p>
+                                    <p>85%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- React -->
+                                <div class='lang-info'>
+                                    <p>React</p>
+                                    <p>67%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 67%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- Svelte -->
+                                <div class='lang-info'>
+                                    <p>Svelte</p>
+                                    <p>40%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 40%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- Powershell -->
+                                <div class='lang-info'>
+                                    <p>Powershell (NEW)</p>
+                                    <p>17%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 17%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- Python -->
+                                <div class='lang-info'>
+                                    <p>Python</p>
+                                    <p>?%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h1>Tools / Other skills</h1>
+                        <div class="tool-skill">
+                            <div class='skill'> <!-- Visual Studio Code -->
+                                <div class='lang-info'>
+                                    <p>Visual Studio Code</p>
+                                    <p>92%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 92%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- ChatGPT / AI -->
+                                <div class='lang-info'>
+                                    <p>ChatGPT / AI</p>
+                                    <p>96%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 96%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- Node.JS -->
+                                <div class='lang-info'>
+                                    <p>Node.JS</p>
+                                    <p>85%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='skill'> <!-- Bun.JS -->
+                                <div class='lang-info'>
+                                    <p>Bun.JS (NEW)</p>
+                                    <p>80%</p>
+                                </div>
+                                <div>
+                                    <div class="skill-bar">
+                                        <div class="skill-bar-fill" style="width: 80%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </main>
+    </div>
 </body>
 
-<!-- Background Script -->
-<script>
-    var scene = new THREE.Scene()
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
-    var renderer = new THREE.WebGLRenderer({ alpha: true }) // Set alpha to true to keep the background transparent
-
-    renderer.setSize(window.innerWidth, window.innerHeight)
-    document.getElementById('canvas-container').appendChild(renderer.domElement)
-
-    var positions = new Float32Array(1000 * 3) // 3 vertices per point
-    var colors = new Float32Array(1000 * 3) // 3 colors per point
-
-    function resetParticles() {
-        for (var i = 0; i < positions.length; i += 3) {
-            positions[i] = Math.random() * 1000 - 500 // x
-            positions[i + 1] = Math.random() * 1000 - 500 // y
-            positions[i + 2] = Math.random() * 1000 - 500 // z
-
-            colors[i] = Math.random()     // r
-            colors[i + 1] = Math.random() // g
-            colors[i + 2] = Math.random() // b
-        }
-    }
-
-    resetParticles()
-
-    var geometry = new THREE.BufferGeometry()
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3)) // New color attribute
-
-    var material = new THREE.PointsMaterial({ size: 1, vertexColors: true }) // Set vertexColors to true
-
-    var stars = new THREE.Points(geometry, material)
-    scene.add(stars)
-
-    camera.position.z = 200
-
-    var cameraSpeed = 0.06 // New variable for camera speed
-
-    var animate = function () {
-        requestAnimationFrame(animate)
-
-        // Use the cameraSpeed variable to control the speed of the particles
-        camera.position.z -= cameraSpeed
-
-        // If the camera has moved past a certain point, reset the positions of the stars and the camera
-        if (camera.position.z < -50) {
-            resetParticles()
-            geometry.attributes.position.needsUpdate = true
-            geometry.attributes.color.needsUpdate = true // Update the colors
-            camera.position.z = 200
-        }
-
-        renderer.render(scene, camera)
-    }
-
-    animate()
-
-    // Add event listener for window resize
-    window.addEventListener('resize', function () {
-        camera.aspect = window.innerWidth / window.innerHeight
-        camera.updateProjectionMatrix()
-        renderer.setSize(window.innerWidth, window.innerHeight)
-    }, false);
-</script>
+<script src='/dist/nav.mobile.js'></script>
 
 </html>

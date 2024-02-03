@@ -4,7 +4,7 @@
  * used throughout each page.
  */
 /* Styles for desktops and laptops */
-@media only screen and (min-width: 1024px) {
+@media only screen and (min-width: 700px) {
   nav {
     width: calc(100% - 34px);
     max-width: 1300px;
@@ -36,10 +36,10 @@
       height: 25px; }
     nav h2:hover {
       cursor: pointer;
-      color: #ff0000;
+      color: #146da8;
       scale: 1.05; }
     nav h2:active {
-      color: #ff0000;
+      color: #146da8;
       scale: 0.9; }
     nav img {
       height: 30px;
@@ -51,10 +51,75 @@
       cursor: pointer;
       border-radius: 100%;
       scale: 1.05;
-      border: 1px solid turquoise;
-      background-color: turquoise; }
+      background-color: #eb9257; }
     nav img:active {
-      scale: 0.9; } }
+      scale: 0.9; }
+    nav .mobile-nav-button {
+      display: none; } }
 
-/* Styles for tablets */
 /* Styles for mobile phones */
+@media only screen and (max-width: 700px) {
+  nav {
+    margin-top: 10px;
+    overflow: hidden; }
+  .mobile-nav-button {
+    filter: invert(1);
+    height: 40px;
+    margin-left: 13px; }
+  .mobile-flex-btn-title {
+    display: flex;
+    justify-content: space-between;
+    width: auto; }
+    .mobile-flex-btn-title h1 {
+      margin-top: 7px;
+      font-weight: 500;
+      margin-right: 10px; }
+  .mobile-social-buttons {
+    filter: invert(1); }
+  #mobile-buttons-display {
+    display: none;
+    justify-content: center;
+    margin-top: 15px;
+    width: 90vw;
+    margin-left: 3.3vw;
+    padding: 1vw;
+    border-radius: 6px;
+    height: 40px;
+    border: 1px solid white;
+    background-color: black; }
+    #mobile-buttons-display h2 {
+      margin: 5px;
+      font-size: 20px;
+      transition: all 0.1s ease-in-out; }
+    #mobile-buttons-display h2:active {
+      color: #146da8; }
+  .mobile-social-buttons {
+    height: 30px;
+    margin: 7px;
+    transition: all 0.1s ease-in-out; }
+  .mobile-social-buttons:active {
+    background-color: #eb9257;
+    border-radius: 100%; }
+  #mobile-socials-display {
+    margin-left: 3.3vw;
+    width: 90vw;
+    padding: 1vw;
+    border-radius: 6px;
+    height: 40px;
+    border: 1px solid white;
+    background-color: black;
+    margin-top: 10px;
+    display: none;
+    justify-content: center;
+    align-items: center; } }
+
+nav {
+  animation: nav-fadeIn 1s ease-in-out; }
+
+@keyframes nav-fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px); }
+  100% {
+    opacity: 1;
+    transform: translateY(0); } }

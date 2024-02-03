@@ -16,25 +16,36 @@
   scroll-behavior: smooth;
   z-index: 1; }
 
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  height: auto !important; }
+
 body {
-  background-color: #0e0e0e;
+  background-color: #0c0c0c;
   color: white;
-  height: 100vh;
   margin: 0;
-  overflow-x: hidden;
   display: flex;
-  justify-content: center;
-  align-items: center; }
+  height: auto;
+  overflow-x: hidden; }
+
+iframe {
+  border-radius: 6px;
+  margin-right: 15px; }
 
 main {
-  height: 100%;
+  height: auto;
   width: 100%;
+  z-index: 1;
   max-width: 1300px; }
 
 .container {
   height: 100%;
   width: 100%;
-  overflow: auto; }
+  display: flex;
+  justify-content: center; }
 
 #canvas-container {
   position: absolute;
