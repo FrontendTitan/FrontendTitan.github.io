@@ -28,22 +28,17 @@ var material = new THREE.PointsMaterial({ size: 1, vertexColors: true }); // Set
 var stars = new THREE.Points(geometry, material);
 scene.add(stars);
 camera.position.z = 200;
-var cameraSpeed = 0.0001; // New variable for camera speed
+var cameraSpeed = 0.05; // New variable for camera speed
 var animate = function () {
     requestAnimationFrame(animate);
-    // Use the cameraSpeed variable to control the speed of the particles
-    camera.position.z += cameraSpeed;
-    camera.position.y += cameraSpeed;
-    camera.position.x -= cameraSpeed;
-    camera.rotation.y -= 0.0001;
+    // Only change the z position of the camera
+    camera.position.z -= cameraSpeed;
     // If the camera has moved past a certain point, reset the positions of the stars and the camera
-    if (camera.rotation.y < -1.9) {
+    if (camera.position.z < -3) {
         resetParticles();
         geometry.attributes.position.needsUpdate = true;
         geometry.attributes.color.needsUpdate = true; // Update the colors
-        camera.rotation.y = 1.5;
         camera.position.z = 200;
-        camera.position.y = 0;
     }
     renderer.render(scene, camera);
 };
