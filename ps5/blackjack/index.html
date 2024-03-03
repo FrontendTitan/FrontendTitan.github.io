@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrontendTitan - Blackjack</title>
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .game {
+            text-align: center;
+        }
+
+        .player-cards {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .dealer-cards {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: white;
+            border: 1px solid black;
+            margin: 0 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .card-appear {
+            animation: card-appear 0.5s ease-in-out;
+        }
+
+        @keyframes card-appear {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+
+        .button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .message {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+    <div class="container">
+        <div class="game">
+            <p>Player's Cards</p>
+            <div class="player-cards">
+                <div class="card">Card 1</div>
+                <div class="card">Card 2</div>
+            </div><br>
+            <p>Dealers's Cards</p>
+            <div class="dealer-cards">
+                <div class="card">Card 1</div>
+                <div class="card">Card 2</div>
+            </div><br>
+            <div class="buttons">
+                <button class="button hit">Hit</button>
+                <button class="button stand">Stand</button>
+            </div>
+            <div class="message">Welcome to Blackjack!</div>
+        </div>
+    </div>
+
+    <script>
+        const cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+        let playerHand = []
+        let dealerHand = []
+        let dealerCardsVisible = false
+
+        function getRandomCard() {
+            const randomIndex = Math.floor(Math.random() * cards.length)
+            return cards[randomIndex]
+        }
+
+        function dealInitialCards() {
+            playerHand.push(getRandomCard())
+            playerHand.push(getRandomCard())
+            dealerHand.push(getRandomCard())
+            dealerHand.push(getRandomCard())
+        }
+
+        function calculateHandValue(hand) {
+            let value = 0
+            let hasAce = false
+
+            for (let card of hand) {
+                if (card === 'A') {
+                    value += 11
+                    hasAce = true
+                } else if (card === 'K' || card === 'Q' || card === 'J') {
+                    value += 10
+                } else {
+                    value += parseInt(card)
+                }
+            }
+
+            if (value > 21 && hasAce) {
+                value -= 10
+            }
+
+            return value
+        }
+
+        function displayCards() {
+            const playerCards = document.querySelector('.player-cards')
+            playerCards.innerHTML = ''
+
+            for (let i = 0; i < playerHand.length; i++) {
+                const cardElement = document.createElement('div')
+                cardElement.classList.add('card')
+                cardElement.textContent = playerHand[i]
+                if (i === playerHand.length - 1) {
+                    cardElement.classList.add('card-appear')
+                }
+                playerCards.appendChild(cardElement)
+            }
+
+            const dealerCards = document.querySelector('.dealer-cards')
+            dealerCards.innerHTML = ''
+
+            if (dealerCardsVisible) {
+                for (let card of dealerHand) {
+                    const cardElement = document.createElement('div')
+                    cardElement.classList.add('card')
+                    cardElement.textContent = card
+                    dealerCards.appendChild(cardElement)
+                }
+            } else {
+                const cardElement = document.createElement('div')
+                cardElement.classList.add('card')
+                cardElement.textContent = 'Folded'
+                dealerCards.appendChild(cardElement)
+            }
+        }
+
+        function displayMessage(message) {
+            const messageElement = document.querySelector('.message')
+            messageElement.textContent = message
+        }
+
+        function checkBlackjack() {
+            if (calculateHandValue(playerHand) === 21) {
+                displayMessage('Blackjack! You win!')
+                determineWinner()
+            }
+        }
+
+        function checkBust() {
+            if (calculateHandValue(playerHand) > 21) {
+                displayMessage('Bust! You lose!')
+                determineWinner()
+            }
+        }
+
+        function hit() {
+            playerHand.push(getRandomCard())
+            displayCards()
+            checkBlackjack()
+            checkBust()
+        }
+
+        function stand() {
+            dealerCardsVisible = true
+            displayCards()
+
+            while (calculateHandValue(dealerHand) < 17) {
+                dealerHand.push(getRandomCard())
+                displayCards()
+            }
+
+            determineWinner()
+        }
+
+        function determineWinner() {
+            const playerValue = calculateHandValue(playerHand)
+            const dealerValue = calculateHandValue(dealerHand)
+
+            if (dealerValue > 21) {
+                displayMessage('Dealer busts! You win!')
+                alert('Dealer busts! You win!')
+                location.reload()
+            } else if (playerValue > 21) {
+                displayMessage('Bust! You lose!')
+                alert('Bust! You lose!')
+                location.reload()
+            } else if (dealerValue > playerValue) {
+                displayMessage('Dealer wins!')
+                alert('Dealer wins!')
+                location.reload()
+            } else if (dealerValue < playerValue) {
+                displayMessage('You win!')
+                alert('You win!')
+                location.reload()
+            } else {
+                displayMessage('It\'s a tie!')
+                alert('It\'s a tie!')
+                location.reload()
+            }
+        }
+
+        function initializeGame() {
+            playerHand = []
+            dealerHand = []
+            dealerCardsVisible = false
+            dealInitialCards()
+            displayCards()
+            displayMessage('Welcome to Blackjack!')
+        }
+
+        document.querySelector('.button.hit').addEventListener('click', hit)
+        document.querySelector('.button.stand').addEventListener('click', stand)
+
+        initializeGame();
+    </script>
+</body>
+
+</html>

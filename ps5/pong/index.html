@@ -1,0 +1,376 @@
+<!--
+    * It's one of the main games for the YouTube Video. As of a result, it will contain cleaner code.
+
+    * Please open the game, alongside the Developer Console for the best debugging experience.
+    * FrontendTitan - 2024 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Pong</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000000;
+            font-family: Arial, sans-serif;
+        }
+
+        #pong {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            background-color: black;
+            border: 1px solid white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .paddle {
+            position: absolute;
+            width: 10px;
+            height: 60px;
+            background-color: rgb(103, 103, 103) !important;
+            border-radius: 2px;
+        }
+
+        #player1 {
+            left: 10px;
+            top: 170px;
+        }
+
+        #player2 {
+            right: 10px;
+            top: 170px;
+        }
+
+        #ball {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: rgb(103, 103, 103);
+            border-radius: 50%;
+        }
+
+        #score {
+            margin-bottom: 10px;
+            color: white;
+            font-size: 20px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .controls button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            font-size: 20px;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 395px;
+            border: 1px solid white;
+        }
+
+        .controls button:hover {
+            background-color: #f2f2f2;
+        }
+
+        .controls button:active {
+            background-color: #000000;
+        }
+
+        #start {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 20px;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 800px;
+            border: 1px solid white;
+        }
+
+        #start:hover {
+            background-color: #f2f2f2;
+        }
+
+        #start:active {
+            background-color: #000000;
+        }
+
+        #start:disabled {
+            background-color: #f2f2f2;
+            color: #000000;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <div id='container'>
+        <div id="score">Player 1: 0 | Player 2: 0</div>
+
+        <div id="pong"> <!-- The game container -->
+            <div id="player1" class="paddle"></div>
+            <div id="player2" class="paddle"></div>
+            <div id="ball"></div>
+        </div>
+
+        <div class="controls"> <!-- The controls for player 1 -->
+            <button onclick="movePaddle('up')">&uArr;</button>
+            <button onclick="movePaddle('down')">&dArr;</button>
+        </div>
+
+        <button id="start">Start</button>
+    </div>
+
+
+    <script>
+        // Get the necessary elements from the DOM
+        const pong = document.getElementById('pong')                // The main container for the game
+        const player1 = document.getElementById('player1')          // The element representing player 1's paddle
+        const player2 = document.getElementById('player2')          // The element representing player 2's paddle
+        const ball = document.getElementById('ball')                // The element representing the ball
+        const scoreElement = document.getElementById('score')       // The element displaying the score
+        const startButton = document.getElementById('start')       // The element displaying the score
+
+        // Initialize the ball's position and speed
+        const intializerValue = Math.random() < 0.4 ? true : false
+        let ballX = 400                                             // The x-coordinate of the ball
+        let ballY = Math.floor(Math.random() * (200 - 50 + 1)) + 50 // The y-coordinate of the ball
+        let ballSpeedX = !intializerValue ? -2 : 2                  // The speed of the ball along the x-axis
+        let ballSpeedY = !intializerValue ? 2 : -2                  // The speed of the ball along the y-axis
+
+        // Initialize the players' paddle positions
+        let player1Y = 170                                          // The y-coordinate of player 1's paddle
+        let player2Y = 170                                          // The y-coordinate of player 2's paddle
+        const paddleSpeed = 20                                      // The speed at which the paddles move
+
+        // Initialize the players' scores
+        let player1Score = 0 // Player 1's score
+        let player2Score = 0 // Player 2's score
+
+        // Generate a random number to determine if the AI can move
+        const randomHit = Math.floor(Math.random() * 10) + 1        // Random number between 1 and 10
+        let aiCanMove = true                                        // Flag indicating if the AI can move
+        let AIhit = 0                                               // Counter for AI hits
+
+        let audioContext // Declare audioContext variable
+
+        /**
+         * Updates the game state and renders the game elements.
+         * 
+         * This function is responsible for updating the position of the ball, handling collisions with walls and paddles,
+         * controlling the AI movement, updating the score, and checking win and lose conditions.
+         * 
+         * @returns {void}
+         */
+        function update() {
+            // Update ball position
+            ballX += ballSpeedX
+            ballY += ballSpeedY
+
+            // Ball collision with walls
+            if (ballY <= 0 || ballY >= 390) {
+                ballSpeedY *= -1
+                playWallHitSound()
+            }
+
+            // Ball collision with paddles
+            if (ballX <= 20 && ballY >= player1Y && ballY <= player1Y + 60) {
+                ballSpeedX *= -1
+                playPaddleHitSound()
+            }
+
+            if (ballX >= 770 && ballY >= player2Y && ballY <= player2Y + 60) {
+                ballSpeedX *= -1
+                setTimeout(aiHitBall, 100)
+                playPaddleHitSound()
+            }
+
+            // AI for the right side
+            const aiThreshold = 5   // Adjust this value to change the AI's sensitivity
+            const regularSpeed = 2  // The AI's regular speed
+            const missSpeed = 1     // The AI's speed when missing the ball
+
+            const aiSpeed = randomHit !== AIhit ? regularSpeed : missSpeed
+
+            if (ballX > 400 && ballY < player2Y + aiThreshold && player2Y > 0 && aiCanMove) {
+                player2Y -= aiSpeed
+            } else if (ballX > 400 && ballY > player2Y + aiThreshold && player2Y < 330 && aiCanMove) {
+                player2Y += aiSpeed
+            }
+
+            player2.style.top = player2Y + 'px'
+
+            ball.style.left = ballX + 'px'
+            ball.style.top = ballY + 'px'
+
+            // Check win and lose conditions and if the ball is out the game area
+            let restart = false
+            if (ballX <= 0) {
+                player2Score++
+
+                if (player2Score >= 3) {
+                    alert("Player 2 wins!")
+                    restart = true
+                } else {
+                    resetGame()
+                }
+            } else if (ballX >= 790) {
+                player1Score++
+
+                if (player1Score >= 3) {
+                    alert("Player 1 wins!")
+                    restart = true
+                } else {
+                    resetGame()
+                }
+            }
+
+            if (restart) {
+                player1Score = 0
+                player2Score = 0
+
+                scoreElement.textContent = `${player1Score} : ${player2Score}`
+
+                resetGame()
+            }
+
+            // Update score
+            scoreElement.textContent = `${player1Score} : ${player2Score}`
+
+            requestAnimationFrame(update)
+        }
+
+        /**
+         * Function to handle the AI hitting the ball.
+         * Disables AI movement temporarily and enables it after 5 seconds.
+         * Triggered when the ball is hit by the AI.
+         */
+        function aiHitBall() {
+            aiCanMove = false
+            AIhit++
+
+            setTimeout(() => {
+                aiCanMove = true
+            }, 5000)
+        }
+
+        /**
+         * Resets the game by initializing the ball position and speed, as well as the player positions.
+         */
+        function resetGame() {
+            const goingUp = Math.random() < 0.4 ? true : false
+
+            ballX = 400
+            ballY = 200
+            ballSpeedX = !goingUp ? -2 : 2
+            ballSpeedY = !goingUp ? 2 : -2
+            player1Y = 170
+            player2Y = 170
+
+            playWinSound()
+        }
+
+        /**
+         * Moves the paddle in the specified direction.
+         * @param {string} direction - The direction to move the paddle ('up' or 'down').
+         */
+        function movePaddle(direction) {
+            if (direction === 'up' && player1Y > 10) {
+                player1Y -= paddleSpeed
+                player1.style.top = player1Y + 'px'
+            } else if (direction === 'down' && player1Y < 330) {
+                player1Y += paddleSpeed
+                player1.style.top = player1Y + 'px'
+            }
+        }
+
+        /**
+         * Plays a sound effect for when the ball hits a wall.
+         */
+        function playWallHitSound() {
+            let oscillator = audioContext.createOscillator()
+            oscillator.type = 'square'
+            oscillator.frequency.value = 300 // Lower pitch for wall hit
+            oscillator.connect(audioContext.destination)
+            oscillator.start()
+            setTimeout(() => { oscillator.stop() }, 200)
+        }
+
+        /**
+         * Plays a sound effect for when the ball hits a paddle.
+         */
+        function playPaddleHitSound() {
+            let oscillator = audioContext.createOscillator()
+            oscillator.type = 'square'
+            oscillator.frequency.value = 600 // Higher pitch for paddle hit
+            oscillator.connect(audioContext.destination)
+            oscillator.start()
+            setTimeout(() => { oscillator.stop() }, 200)
+        }
+
+        /**
+         * Plays a sound effect for when the player wins the game.
+         */
+        function playWinSound() {
+            let oscillator = audioContext.createOscillator()
+            oscillator.type = 'square'
+            oscillator.frequency.value = 900 // Highest pitch for win
+            oscillator.connect(audioContext.destination)
+            oscillator.start()
+            setTimeout(() => { oscillator.stop() }, 200)
+        }
+
+        startButton.addEventListener('click', function () {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)()
+            startButton.disabled = true
+            update()
+        });
+    </script>
+</body>
+
+</html>

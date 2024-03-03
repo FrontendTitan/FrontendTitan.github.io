@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrontendTitan - Memory Matching Game</title>
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f2f2f2;
+        }
+
+        * {
+            color-scheme: dark !important;
+        }
+
+        h1 {
+            margin-top: 0;
+            padding-top: 20px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 600px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+            color: #000;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            visibility: hidden;
+        }
+
+        .flipped {
+            background-color: #f00;
+            color: #2bff00;
+        }
+
+        .matched {
+            background-color: #2bff00;
+            color: #fff;
+            cursor: default;
+        }
+
+        .game-over {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            font-size: 24px;
+            border-radius: 5px;
+            z-index: 999;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <h1>Memory Matching Game</h1>
+    <div class="game-container" id="game-board"></div>
+
+    <script>
+        const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F']
+        let flippedCards = []
+        let matchedCards = []
+
+        function createCard(card) {
+            const cardElement = document.createElement('div')
+            cardElement.classList.add('card')
+            cardElement.innerHTML = `<span class="card-content">${card}</span>`
+            cardElement.addEventListener('click', flipCard)
+            return cardElement
+        }
+
+        function flipCard() {
+            if (flippedCards.length < 2 && !flippedCards.includes(this) && !matchedCards.includes(this)) {
+                this.classList.add('flipped')
+                this.querySelector('.card-content').style.visibility = 'visible'
+                flippedCards.push(this)
+
+                if (flippedCards.length === 2) {
+                    setTimeout(checkForMatch, 1000)
+                }
+            }
+        }
+
+        function checkForMatch() {
+            const card1 = flippedCards[0]
+            const card2 = flippedCards[1]
+
+            if (card1.innerHTML === card2.innerHTML) {
+                card1.removeEventListener('click', flipCard)
+                card2.removeEventListener('click', flipCard)
+                card1.classList.add('matched')
+                card2.classList.add('matched')
+                matchedCards.push(card1, card2)
+            } else {
+                card1.classList.remove('flipped')
+                card1.querySelector('.card-content').style.visibility = 'hidden'
+                card2.classList.remove('flipped')
+                card2.querySelector('.card-content').style.visibility = 'hidden'
+            }
+
+            flippedCards = []
+
+            if (matchedCards.length === cards.length) {
+                alert('Congratulations! You won the game!')
+                location.reload()
+            }
+        }
+
+
+        function shuffleCards() {
+            for (let i = cards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cards[i], cards[j]] = [cards[j], cards[i]]
+            }
+        }
+
+        function initializeGame() {
+            shuffleCards()
+            const gameBoard = document.getElementById('game-board')
+            cards.forEach(card => {
+                const cardElement = createCard(card)
+                gameBoard.appendChild(cardElement)
+            })
+        }
+
+        initializeGame();
+    </script>
+</body>
+
+</html>

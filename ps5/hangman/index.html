@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Hangman</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #word-container {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #guesses-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #guesses {
+            font-weight: bold;
+        }
+
+        #input-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #guess-input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #guess-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #result-container {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #hangman-container {
+            text-align: center;
+        }
+
+        pre {
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .keyboard-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            justify-content: center;
+            margin-top: 20px;
+            max-width: max-content;
+        }
+
+        .keyboard-button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            max-width: 100px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+    <h1>Hangman Game</h1>
+    <div id="word-container">
+        <!-- Display the word with underscores -->
+    </div>
+    <div id="guesses-container">
+        <p>Guesses: <span id="guesses"></span></p>
+    </div>
+    <div id="input-container">
+        <input type="text" id="guess-input" placeholder="Enter a letter">
+        <button id="guess-button">Guess</button>
+    </div>
+    <div id="result-container">
+        <!-- Display the game result -->
+    </div>
+    <div id="hangman-container">
+        <!-- Display the hangman image -->
+    </div>
+    <div class="keyboard-container">
+        <button class="keyboard-button">Q</button>
+        <button class="keyboard-button">W</button>
+        <button class="keyboard-button">E</button>
+        <button class="keyboard-button">R</button>
+        <button class="keyboard-button">T</button>
+        <button class="keyboard-button">Y</button>
+        <button class="keyboard-button">U</button>
+        <button class="keyboard-button">I</button>
+        <button class="keyboard-button">O</button>
+        <button class="keyboard-button">P</button><br>
+        <button class="keyboard-button">A</button>
+        <button class="keyboard-button">S</button>
+        <button class="keyboard-button">D</button>
+        <button class="keyboard-button">F</button>
+        <button class="keyboard-button">G</button>
+        <button class="keyboard-button">H</button>
+        <button class="keyboard-button">J</button>
+        <button class="keyboard-button">K</button>
+        <button class="keyboard-button">L</button><br>
+        <button class="keyboard-button">Z</button>
+        <button class="keyboard-button">X</button>
+        <button class="keyboard-button">C</button>
+        <button class="keyboard-button">V</button>
+        <button class="keyboard-button">B</button>
+        <button class="keyboard-button">N</button>
+        <button class="keyboard-button">M</button>
+    </div>
+
+    <script>
+        // Hangman game logic
+        const words = [
+            "apple", "banana", "cherry", "durian", "elderberry", "fig", "grape", "honeydew", "kiwi", "lemon",
+            "mango", "nectarine", "orange", "pear", "quince", "raspberry", "strawberry", "tangerine", "watermelon",
+            "avocado", "blueberry", "coconut", "dragonfruit", "eggplant", "fennel", "grapefruit", "huckleberry",
+            "jackfruit", "kiwifruit", "lime", "melon", "nutmeg", "olive", "papaya", "quinoa", "rhubarb", "starfruit",
+            "tomato", "ugli fruit", "vanilla", "walnut", "xigua", "yam", "zucchini", "apricot", "blackberry",
+            "cantaloupe", "date", "elderflower"
+        ]
+
+        let word = ""
+        let guessedLetters = []
+        let remainingGuesses = 6
+
+        function startGame() {
+            word = getRandomWord()
+            guessedLetters = []
+            remainingGuesses = 6
+            updateWordDisplay()
+            updateGuessesDisplay()
+            updateResultDisplay("")
+            updateHangmanDisplay()
+        }
+
+        function getRandomWord() {
+            return words[Math.floor(Math.random() * words.length)]
+        }
+
+        function updateWordDisplay() {
+            const wordContainer = document.getElementById("word-container")
+            wordContainer.innerHTML = ""
+            for (let i = 0; i < word.length; i++) {
+                const letter = word[i]
+                if (guessedLetters.includes(letter)) {
+                    wordContainer.innerHTML += letter
+                } else {
+                    wordContainer.innerHTML += "_"
+                }
+            }
+        }
+
+        function updateGuessesDisplay() {
+            const guessesContainer = document.getElementById("guesses")
+            guessesContainer.textContent = guessedLetters.join(", ")
+        }
+
+        function updateResultDisplay(result) {
+            const resultContainer = document.getElementById("result-container")
+            resultContainer.textContent = result
+        }
+
+        function updateHangmanDisplay() {
+            const hangmanContainer = document.getElementById("hangman-container")
+            const hangmanImages = [
+                `
+  +---+
+  |   |
+      |
+      |
+      |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+      |
+      |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+  |   |
+      |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|   |
+      |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+      |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ /    |
+      |
+=========`,
+                `
+  +---+
+  |   |
+  O   |
+ /|\\  |
+ / \\  |
+      |
+=========`
+            ]
+            const hangmanImageIndex = 6 - remainingGuesses
+            hangmanContainer.innerHTML = `<pre>${hangmanImages[hangmanImageIndex]}</pre>`
+        }
+
+        function handleGuess() {
+            const guessInput = document.getElementById("guess-input")
+            const guess = guessInput.value.toLowerCase()
+            guessInput.value = ""
+
+            if (guess.length !== 1 || !guess.match(/[a-z]/i)) {
+                updateResultDisplay("Please enter a single letter.")
+                setTimeout(() => {
+                    updateResultDisplay(' ')
+                }, 2000)
+                return
+            }
+
+            if (guessedLetters.includes(guess)) {
+                updateResultDisplay("You already guessed that letter.")
+                setTimeout(() => {
+                    updateResultDisplay(' ')
+                }, 2000)
+                return
+            }
+
+            guessedLetters.push(guess)
+
+            if (word.includes(guess)) {
+                updateWordDisplay()
+                if (!word.split("").some(letter => !guessedLetters.includes(letter))) {
+                    setTimeout(() => {
+                        alert("Congratulations! You won!")
+                        location.reload()
+                    }, 100)
+                }
+            } else {
+                remainingGuesses--
+                updateGuessesDisplay()
+                updateHangmanDisplay()
+                if (remainingGuesses === 0) {
+                    setTimeout(() => {
+                        alert("You lost!")
+                        location.reload()
+                    }, 100)
+                }
+            }
+        }
+
+        // Event listeners
+        document.getElementById("guess-button").addEventListener("click", handleGuess)
+        document.getElementById("guess-input").addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                handleGuess()
+            }
+        })
+
+        // Start the game
+        startGame();
+    </script>
+</body>
+
+</html>

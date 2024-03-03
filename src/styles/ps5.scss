@@ -1,0 +1,73 @@
+.body {
+    padding: 31px;
+}
+
+.flex-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; // Allow the flex items to wrap onto multiple lines
+    width: 100%; // Take up all available width
+
+    >* {
+        opacity: 0; // Start with opacity 0
+        animation: fadeIn 1s ease-in-out forwards 2s; // Apply the fade-in animation to all direct children, starting after 2s
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0; // Start with opacity 0
+        transform: translateY(-20px); // Start 20px below the final position
+    }
+
+    100% {
+        opacity: 1; // End with opacity 1
+    }
+}
+
+.header-h1 {
+    animation: fadeIn 1s ease-in-out backwards 0.2s; // Apply the fade-in animation to the header, starting after 2s
+}
+
+.header-p {
+    animation: fadeIn 1s ease-in-out backwards 1.3s; // Apply the fade-in animation to the paragraph, starting after 2s
+}
+
+.card {
+    flex: 1 0 200px; // Grow and shrink as needed, but don't shrink below 200px
+    margin: 10px; // Add some margin to separate the cards
+}
+
+.card {
+    margin: 10px; // Add some margin to separate the cards
+    max-width: 300px;
+    max-height: 130px;
+    width: 300px; // Set a fixed width for the cards
+    height: 130px; // Set a fixed height for the cards
+    border-radius: 10px;
+    border: 2px solid white;
+    padding: 20px; // Add some padding inside the card
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); // Add some shadow to the card
+
+    h1 {
+        margin-bottom: 20px; // Add some margin to the bottom of the h1 element
+        font-size: 24px; // Change the font size of the h1 element
+    }
+
+    button {
+        padding: 10px 20px; // Add some padding to the button
+        border: none; // Remove the border from the button
+        border-radius: 5px; // Add some border radius to the button
+        background-color: white; // Change the background color of the button
+        color: black; // Change the color of the button
+        cursor: pointer; // Change the cursor when hovering over the button
+
+        &:hover {
+            background-color: #555; // Change the background color of the button when hovering
+        }
+    }
+}

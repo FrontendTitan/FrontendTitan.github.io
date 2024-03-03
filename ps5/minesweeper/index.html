@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Minesweeper</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #000;
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .mine {
+            background-color: red;
+        }
+
+        .revealed {
+            background-color: lightgray;
+        }
+
+        .marked {
+            background-color: yellow;
+        }
+
+        #board {
+            width: 320px;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <h1>Minesweeper</h1>
+    <div id="board"></div>
+
+    <script>
+        let boardSize = 10
+        const mineCount = 10
+        let board = []
+
+        function createBoard() {
+            for (let i = 0; i < boardSize; i++) {
+                board[i] = []
+                for (let j = 0; j < boardSize; j++) {
+                    board[i][j] = {
+                        isMine: false,
+                        isRevealed: false,
+                        isMarked: false,
+                        neighborCount: 0
+                    }
+                }
+            }
+        }
+
+        function plantMines() {
+            let plantedMines = 0
+            while (plantedMines < mineCount) {
+                const row = Math.floor(Math.random() * boardSize)
+                const col = Math.floor(Math.random() * boardSize)
+                if (!board[row][col].isMine) {
+                    board[row][col].isMine = true
+                    plantedMines++
+                }
+            }
+        }
+
+        function calculateNeighborCounts() {
+            for (let i = 0; i < boardSize; i++) {
+                for (let j = 0; j < boardSize; j++) {
+                    if (!board[i][j].isMine) {
+                        let count = 0
+                        for (let x = -1; x <= 1; x++) {
+                            for (let y = -1; y <= 1; y++) {
+                                const neighborRow = i + x
+                                const neighborCol = j + y
+                                if (
+                                    neighborRow >= 0 &&
+                                    neighborRow < boardSize &&
+                                    neighborCol >= 0 &&
+                                    neighborCol < boardSize &&
+                                    board[neighborRow][neighborCol].isMine
+                                ) {
+                                    count++
+                                }
+                            }
+                        }
+                        board[i][j].neighborCount = count
+                    }
+                }
+            }
+        }
+
+        function revealCell(row, col) {
+            if (
+                row >= 0 &&
+                row < boardSize &&
+                col >= 0 &&
+                col < boardSize &&
+                !board[row][col].isRevealed &&
+                !board[row][col].isMarked
+            ) {
+                board[row][col].isRevealed = true
+                const cell = document.getElementById(`cell-${row}-${col}`)
+                cell.classList.add("revealed")
+                if (board[row][col].isMine) {
+                    // Game over logic
+                    cell.classList.add("mine")
+                    cell.textContent = "💣"
+                    alert("You lost!")
+                    location.reload()
+                } else if (board[row][col].neighborCount === 0) {
+                    // Reveal neighboring cells
+                    for (let x = -1; x <= 1; x++) {
+                        for (let y = -1; y <= 1; y++) {
+                            revealCell(row + x, col + y)
+                        }
+                    }
+                } else {
+                    cell.textContent = board[row][col].neighborCount
+                }
+            }
+        }
+
+        function markCell(row, col) {
+            if (
+                row >= 0 &&
+                row < boardSize &&
+                col >= 0 &&
+                col < boardSize &&
+                !board[row][col].isRevealed
+            ) {
+                const cell = document.getElementById(`cell-${row}-${col}`)
+                if (board[row][col].isMarked) {
+                    cell.classList.remove("marked")
+                    board[row][col].isMarked = false
+                } else {
+                    cell.classList.add("marked")
+                    board[row][col].isMarked = true
+                }
+            }
+        }
+
+        function checkWin() {
+            let revealedCount = 0
+            for (let i = 0; i < boardSize; i++) {
+                for (let j = 0; j < boardSize; j++) {
+                    if (board[i][j].isRevealed) {
+                        revealedCount++
+                    }
+                }
+            }
+            if (revealedCount === boardSize * boardSize - mineCount) {
+                alert("You won!")
+                location.reload()
+            }
+        }
+
+        function renderBoard() {
+            const boardElement = document.getElementById("board")
+            boardElement.innerHTML = ""
+            for (let i = 0; i < boardSize; i++) {
+                for (let j = 0; j < boardSize; j++) {
+                    const cell = document.createElement("div")
+                    cell.classList.add("cell")
+                    cell.id = `cell-${i}-${j}`
+                    cell.addEventListener("click", () => {
+                        revealCell(i, j)
+                        checkWin()
+                    })
+                    cell.addEventListener("contextmenu", (event) => {
+                        event.preventDefault()
+                        markCell(i, j)
+                        return false
+                    })
+                    boardElement.appendChild(cell)
+                }
+            }
+        }
+
+        function startGame() {
+            createBoard()
+            plantMines()
+            calculateNeighborCounts()
+            renderBoard()
+        }
+
+        startGame();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>frontendtitan - Guess The Number</title>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <div>
+        <div class="container">
+            <h1>Guess The Number</h1>
+            <p>Guess a number between 1 and 10:</p>
+            <input type="number" id="guessInput" min="1" max="10">
+            <button onclick="checkGuess()">Submit</button>
+            <p id="result"></p>
+        </div>
+
+        <div class="keyboard-container">
+            <div class="keyboard">
+                <button onclick="addNumber(1)">1</button>
+                <button onclick="addNumber(2)">2</button>
+                <button onclick="addNumber(3)">3</button>
+                <button onclick="addNumber(4)">4</button>
+                <button onclick="addNumber(5)">5</button>
+                <button onclick="addNumber(6)">6</button>
+                <button onclick="addNumber(7)">7</button>
+                <button onclick="addNumber(8)">8</button>
+                <button onclick="addNumber(9)">9</button>
+                <button onclick="addNumber(10)">10</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var randomNumber = Math.floor(Math.random() * 10) + 1
+        function checkGuess() {
+            var guess = parseInt(document.getElementById("guessInput").value)
+
+            if (guess === randomNumber) {
+                document.getElementById("result").innerHTML = "Congratulations! You guessed the correct number."
+                document.body.style.backgroundColor = "green"
+                setTimeout(() => {
+                    location.reload() // Refresh the page
+                }, 2500)
+            } else if (guess < randomNumber) {
+                document.getElementById("result").innerHTML = "Too low! Try again."
+                document.body.style.backgroundColor = "red"
+                setTimeout(() => document.body.style.backgroundColor = "", 2000)
+            } else {
+                document.getElementById("result").innerHTML = "Too high! Try again."
+                document.body.style.backgroundColor = "red"
+                setTimeout(() => document.body.style.backgroundColor = "", 2000)
+            }
+        }
+
+        function addNumber(number) {
+            var guessInput = document.getElementById("guessInput")
+            guessInput.value = number
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            color-scheme: dark;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            width: 400px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #333;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        a {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:nth-child(2) {
+            top: 45px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: gray;
+        }
+
+        a:active {
+            color: #fff;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-top: 0;
+        }
+
+        p {
+            color: #ccc;
+        }
+
+        input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #444;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .keyboard-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            background-color: #333;
+            width: 400px;
+            padding: 30px;
+            border-radius: 5px;
+        }
+
+        .keyboard button {
+            padding: 10px;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .keyboard button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,682 @@
+<!--
+    * It's one of the main games for the YouTube Video. As of a result, it will contain cleaner code.
+
+    * Please open the game, alongside the Developer Console for the best debugging experience.
+    * FrontendTitan - 2024 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Tetris</title>
+
+    <style>
+        * {
+            color-scheme: dark;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            background-color: rgb(255, 255, 255) !important;
+            box-shadow: 0 0 100px 10px rgb(255, 255, 255);
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 0;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        .game-info span {
+            margin-right: 10px;
+        }
+
+        #startButton,
+        #pauseButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            box-shadow: 0 0 20px 0 green;
+            transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        #info-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20vw;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        #info-container * {
+            margin: 0 5px;
+        }
+
+        #controls-container {
+            z-index: 1000;
+            margin-right: 20vw;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        #controls-container button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 32px;
+            border-radius: 100%;
+            margin-bottom: 10px;
+            height: 10vh;
+            width: 10vh;
+            max-height: 10vh;
+            max-width: 10vh;
+            box-shadow: 0 0 20px 0 green;
+            transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s !important;
+            animation: popIn 0.5s ease-in-out;
+        }
+
+        #controls-container button:hover,
+        #startButton:hover,
+        #pauseButton:hover {
+            background-color: #45a049;
+            box-shadow: 0 0 100px 50px green;
+        }
+
+        #controls-container button:active,
+        #startButton:active,
+        #pauseButton:active {
+            background-color: #45a049;
+            box-shadow: 0 0 20px 10px green;
+        }
+
+        .controls-button-left-gap {
+            margin-right: 5px;
+        }
+
+        #controls-button-speed-increase {
+            transform: translateY(4px) !important;
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .modal-content {
+            background-color: #000000;
+            margin: 0;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        a {
+            color: white !important;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+    <div>
+        <div id='info-container'>
+            <button id="startButton">Start</button>
+            <button id="pauseButton">Pause</button>
+            <div id="level"></div>
+            <div id="score"></div>
+        </div><br><br><br><br><br>
+        <div id="controls-container">
+            <div>
+                <button id='controls-button-left' class='controls-button-left-gap'>&larr;</button>
+                <button id='controls-button-right'>&rarr;</button>
+            </div>
+            <div>
+                <button id='controls-button-rotate' class='controls-button-left-gap'>&#8635;</button>
+                <button id='controls-button-speed-increase'>⚡</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p>Please resize your window to at least 664x431 to use this webpage.</p>
+        </div>
+    </div>
+
+    <canvas id="game" width="300" height="600"></canvas>
+
+    <script>
+        window.addEventListener('resize', checkWindowSize)
+
+        function checkWindowSize() {
+            var w = window.innerWidth
+            var h = window.innerHeight
+            var modal = document.getElementById("modal")
+
+            if (w < 664 || h < 431) {
+                modal.style.display = "block"
+            } else {
+                modal.style.display = "none"
+            }
+        }
+
+        // Call the function initially to check the size on page load
+        checkWindowSize();
+    </script>
+
+    <script>
+        // Get the canvas element and its 2D rendering context
+        const canvas = document.getElementById('game')
+        const context = canvas.getContext('2d')
+
+        canvas.style.height = '90vh'
+
+        // Define the size of each grid cell
+        const grid = 20
+
+        // Calculate the number of rows and columns based on the canvas size and grid size
+        const rows = canvas.height / grid
+        const cols = canvas.width / grid
+
+        // Define the different tetromino shapes
+        const tetrominoes = [
+            [[1, 1, 1, 1]],
+            [[1, 1], [1, 1]],
+            [[1, 1, 0], [0, 1, 1]],
+            [[0, 1, 1], [1, 1]],
+            [[1, 1, 1], [0, 1, 0]]
+        ]
+
+        // Define the colors for each tetromino shape
+        const colors = [
+            'cyan',
+            'yellow',
+            'purple',
+            'green',
+            'red',
+            'blue',
+            'orange'
+        ]
+
+        let tetromino                                           // The current tetromino
+        let position = {}                                       // The position of the current tetromino
+        let gameBoard = []                                      // The game board grid
+        let score = 0                                           // The player's score
+        let level = 1                                           // The current level
+        let dropCounter = 0                                     // Counter for dropping the tetromino
+        let dropInterval = 1000                                 // Interval for dropping the tetromino
+        const scale = 20                                        // Scale factor for rendering
+
+        const scoreDisplay = document.getElementById('score')
+        scoreDisplay.textContent = `Score: ${score}`            // Display the current score
+
+        const levelDisplay = document.getElementById('level')
+        levelDisplay.textContent = `Level: ${level}`            // Display the current level
+
+        /**
+         * Generates a random tetromino object.
+         * @returns {Object} The generated tetromino object.
+         */
+        function generateRandomTetromino() {
+            const randomIndex = Math.floor(Math.random() * tetrominoes.length) // Generate a random index for selecting a tetromino shape
+            return {
+                matrix: [...tetrominoes[randomIndex]], // Create a copy of the selected tetromino shape matrix
+                color: colors[randomIndex] // Assign a color to the tetromino shape
+            }
+        }
+
+        /**
+         * Resets the game by generating a new tetromino, setting its position, and checking for collisions.
+         * If a collision occurs, the game ends and the score, level, and game board are reset.
+         */
+        function reset() {
+            const piece = generateRandomTetromino()
+            tetromino = piece.matrix
+            color = piece.color
+            position.y = 0
+            position.x = (cols / 2 | 0) - (tetromino[0].length / 2 | 0)
+
+            // End the game if the new tetromino collides with the game board
+            if (collide()) {
+                gameBoard.forEach(row => row.fill(0))
+                alert('Game Over. Score: ' + score)
+                score = 0
+                scoreDisplay.textContent = `Score: ${score}`
+                level = 1
+                levelDisplay.textContent = `Level: ${level}`
+            }
+        }
+
+        /**
+         * Draws the game board and tetromino on the canvas.
+         */
+        function draw() {
+            context.fillStyle = 'white'
+            context.fillRect(0, 0, canvas.width, canvas.height)
+
+            // Draw the game board and tetromino on the canvas
+            if (Array.isArray(gameBoard) && Array.isArray(tetromino)) {
+                drawMatrix(gameBoard, { x: 0, y: 0 }) // Draw the game board
+                drawMatrix(tetromino, position) // Draw the current tetromino
+            }
+        }
+
+        /**
+         * Draws a matrix on the canvas.
+         * @param {Array} matrix - The matrix to be drawn.
+         * @param {Object} offset - The offset position of the matrix.
+         */
+        function drawMatrix(matrix, offset) {
+            matrix.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        // Set the fill style to the color of the tetromino
+                        context.fillStyle = color
+
+                        // Draw a filled rectangle representing the tetromino cell
+                        context.fillRect(
+                            x * scale + offset.x * scale,
+                            y * scale + offset.y * scale,
+                            scale,
+                            scale
+                        )
+                    }
+                })
+            })
+        }
+
+        /**
+         * Merges the tetromino with the game board.
+         */
+        function merge() {
+            tetromino.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value !== 0) {
+                        gameBoard[y + position.y][x + position.x] = value
+                    }
+                })
+            })
+        }
+
+        /**
+         * Checks if the tetromino collides with the game board or boundaries.
+         * @returns {boolean} - True if there is a collision, false otherwise.
+         */
+        function collide() {
+            for (let y = 0; y < tetromino.length; ++y) {
+
+                for (let x = 0; x < tetromino[y].length; ++x) {
+
+                    // Check if the tetromino cell is not empty and if the corresponding game board cell is not empty
+                    if (tetromino[y][x] !== 0 && (gameBoard[y + position.y] && gameBoard[y + position.y][x + position.x]) !== 0) {
+                        return true // Collision detected
+                    }
+
+                }
+
+            }
+
+            return false            // No collision detected
+        }
+
+        /**
+         * Rotates a matrix in the specified direction.
+         * @param {Array} matrix - The matrix to be rotated.
+         * @param {number} dir - The direction of rotation (-1 for counter-clockwise, 1 for clockwise).
+         */
+        function rotate(matrix, dir) { // Not gonna pretend like I know what's going on here
+            for (let y = 0; y < matrix.length; ++y) {
+                for (let x = 0; x < y; ++x) {
+                    [matrix[x][y], matrix[y][x]] = [matrix[y][x], matrix[x][y]]
+                }
+            }
+
+            if (dir > 0) {
+                matrix.forEach(row => row.reverse())
+            } else {
+                matrix.reverse()
+            }
+        }
+
+        /**
+         * Rotates the tetromino and handles collision.
+         * @param {number} dir - The direction of rotation (-1 for counter-clockwise, 1 for clockwise).
+         */
+        function playerRotate(dir) {
+            const pos = position.x
+            let offset = 1
+            rotate(tetromino, dir)
+
+            // Handle collision after rotation
+            while (collide()) {
+                position.x += offset
+                offset = -(offset + (offset > 0 ? 1 : -1))
+
+                // If collision cannot be resolved, revert rotation and position
+                if (offset > tetromino[0].length) {
+                    rotate(tetromino, -dir)
+                    position.x = pos
+                    return
+                }
+            }
+        }
+
+        /**
+         * Removes completed rows from the game board and updates the score and level.
+         */
+        function removeRow() {
+            outer: for (let y = rows - 1; y > 0; --y) {
+                for (let x = 0; x < cols; ++x) {
+                    if (gameBoard[y][x] === 0) {
+                        continue outer                          // Skip to the next row if any cell is empty
+                    }
+                }
+
+                const row = gameBoard.splice(y, 1)[0].fill(0)   // Remove the completed row and fill it with zeros
+                gameBoard.unshift(row)                          // Add the completed row back to the top
+                score += 10                                     // Increase the score by 10
+                scoreDisplay.textContent = `Score: ${score}`    // Update the score display
+
+                // Increase level and decrease dropInterval
+                level = Math.floor(score / 100) + 1             // Calculate the new level based on the score
+                levelDisplay.textContent = `Level: ${level}`    // Update the level display
+                dropInterval = 1000 - (level * 50)             // Adjust the drop interval based on the level
+            }
+        }
+
+        /**
+         * Rotates the given matrix in the specified direction.
+         * @param {Array<Array<number>>} matrix - The matrix to rotate.
+         * @param {number} dir - The direction of rotation (1 for clockwise, -1 for counterclockwise).
+         * @returns {Array<Array<number>>} The rotated matrix.
+         */
+        function rotate(matrix, dir) {
+            // Transpose the matrix
+            const transposedMatrix = matrix[0].map((_, i) => matrix.map(row => row[i]))
+
+            // Reverse the rows based on the direction of rotation
+            if (dir > 0) {
+                transposedMatrix.forEach(row => row.reverse())
+            } else {
+                transposedMatrix.reverse()
+            }
+
+            return transposedMatrix
+        }
+
+        /**
+         * Rotates the current tetromino in the specified direction and handles collision detection.
+         * @param {number} dir - The direction of rotation (1 for clockwise, -1 for counterclockwise).
+         */
+        function playerRotate(dir) {
+            const pos = position.x
+            let offset = 1
+
+            // Rotate the tetromino in the specified direction
+            tetromino = rotate(tetromino, dir)
+
+            // Handle collision detection
+            while (collide()) {
+                position.x += offset
+                offset = -(offset + (offset > 0 ? 1 : -1))
+
+                // If the offset exceeds the tetromino's width, rotate it back and reset the position
+                if (offset > tetromino[0].length) {
+                    tetromino = rotate(tetromino, -dir)
+                    position.x = pos
+                    return
+                }
+            }
+        }
+
+        /**
+         * Updates the game state and triggers the drawing of the game board.
+         * @param {number} time - The current timestamp.
+         */
+        function update(time = 0) {
+            const deltaTime = time - lastTime
+            lastTime = time
+
+            dropCounter += deltaTime
+            if (dropCounter > dropInterval) {
+                position.y++
+                if (collide()) {
+                    position.y--
+                    merge()
+                    removeRow()
+                    reset()
+                }
+                dropCounter = 0
+            }
+            draw()
+            requestAnimationFrame(update)
+        }
+
+        let lastTime = 0
+
+        const startButton = document.getElementById('startButton')
+        startButton.addEventListener('click', () => {
+            document.querySelector('canvas').style.boxShadow = "0 0 1000px 50px rgb(255, 255, 255)"
+
+            startButton.remove()
+
+            dropInterval = 1000 - (level * 50)
+            document.getElementById('pauseButton').innerText = 'Pause'
+
+            /**
+             * Updates the game state.
+             * @param {number} lastTime - The last time the game state was updated.
+             */
+            update()
+
+            /**
+             * Initializes the game board with empty cells.
+             * 
+             * @param {number} rows - The number of rows in the game board.
+             * @param {number} cols - The number of columns in the game board.
+             */
+            for (let y = 0; y < rows; ++y) {
+                gameBoard[y] = []
+                for (let x = 0; x < cols; ++x) {
+                    gameBoard[y][x] = 0
+                }
+            }
+
+            // Initialize tetromino
+            reset()
+            draw()
+
+            // Now that tetromino and gameBoard are initialized, we can start the game loop
+            requestAnimationFrame(update)
+
+            /**
+             * Event listener for keydown events.
+             * Handles different key codes to control the movement and rotation of the tetris blocks.
+             * @param {Event} event - The keydown event object.
+             */
+            document.addEventListener('keydown', event => {
+                if (event.keyCode === 37) {
+                    // Left arrow key
+                    position.x--
+                    if (collide()) {
+                        position.x++
+                    }
+                } else if (event.keyCode === 39) {
+                    // Right arrow key
+                    position.x++
+                    if (collide()) {
+                        position.x--
+                    }
+                } else if (event.keyCode === 40) {
+                    // Down arrow key
+                    position.y++
+                    if (collide()) {
+                        position.y--
+                        merge()
+                        removeRow()
+                        reset()
+                    }
+                } else if (event.keyCode === 81) {
+                    // Q key
+                    playerRotate(-1)
+                } else if (event.keyCode === 87) {
+                    // W key
+                    playerRotate(1)
+                } else if (event.keyCode === 81) { // Q key
+                    // Q key
+                    playerRotate(-1)               // Rotate counterclockwise
+                } else if (event.keyCode === 87) { // W key
+                    // W key
+                    playerRotate(1)                // Rotate clockwise
+                }
+            })
+
+            /**
+             * Adds an event listener to the 'controls-button-left' element.
+             * Decreases the x position of the tetromino by 1.
+             * If the tetromino collides with the game board, the x position is incremented back.
+             */
+            document.getElementById('controls-button-left').addEventListener('click', () => {
+                position.x--
+                if (collide()) {
+                    position.x++
+                }
+            })
+
+            /**
+             * Adds an event listener to the 'controls-button-right' element.
+             * Increases the x position of the tetromino by 1.
+             * If the tetromino collides with the game board, the x position is decremented back.
+             */
+            document.getElementById('controls-button-right').addEventListener('click', () => {
+                position.x++
+                if (collide()) {
+                    position.x--
+                }
+            })
+
+            /**
+             * Adds an event listener to the 'controls-button-rotate' element.
+             * Calls the playerRotate function with a rotation direction of 1.
+             */
+            document.getElementById('controls-button-rotate').addEventListener('click', () => {
+                playerRotate(1)
+            })
+
+            /**
+             * Adds event listeners to the 'controls-button-speed-increase' element for both mousedown and mouseup events.
+             * Increases the y position of the tetromino by 1 when the button is pressed.
+             * If the tetromino collides with the game board, the y position is decremented back,
+             * the tetromino is merged with the game board, the completed rows are removed,
+             * and the game is reset.
+             */
+            const speedIncreaseButton = document.getElementById('controls-button-speed-increase')
+            let buttonHoldInterval
+
+            speedIncreaseButton.addEventListener('mousedown', () => {
+                position.y++
+                if (collide()) {
+                    position.y--
+                    merge()
+                    removeRow()
+                    reset()
+                }
+                buttonHoldInterval = setInterval(() => {
+                    position.y++
+                    if (collide()) {
+                        position.y--
+                        merge()
+                        removeRow()
+                        reset()
+                    }
+                }, 100)
+            })
+
+            speedIncreaseButton.addEventListener('mouseup', () => {
+                clearInterval(buttonHoldInterval)
+            })
+
+            document.getElementById('pauseButton').addEventListener('click', () => {
+                if (dropInterval !== Number.MAX_SAFE_INTEGER) {
+                    clearInterval(dropInterval)
+                    dropInterval = Number.MAX_SAFE_INTEGER
+                    document.getElementById('pauseButton').textContent = 'Resume'
+                    document.querySelector('canvas').style.boxShadow = "0 0 100px 0 rgb(255, 255, 255)"
+                } else {
+                    dropInterval = 1000 - (level * 50)
+                    document.getElementById('pauseButton').textContent = 'Pause'
+                    document.querySelector('canvas').style.boxShadow = "0 0 1000px 50px rgb(255, 255, 255)"
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

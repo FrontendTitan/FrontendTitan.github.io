@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - PS5</title>
+
+    <!-- Static Files -->
+    <link rel="stylesheet" href="/dist/nav.css">
+    <link rel="stylesheet" href="/dist/global.css">
+    <link rel="stylesheet" href="/dist/ps5.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src='/dist/background.js' defer></script>
+    <script src='/dist/nav.mobile.js' defer></script>
+    <script src='/dist/nav.js' defer></script>
+</head>
+
+<body>
+    <div class="container">
+        <main>
+            <nav> <!-- Navigation Bar -->
+                <div> <!-- Title and main buttons div -->
+                    <div class='mobile-flex-btn-title'>
+                        <img src="/src/assets/list.svg" alt="Menu Button" class='mobile-nav-button'>
+                        <h1 id='nav-home-logo-btn'>FrontendTitan &hairsp; &hairsp;</h1>
+                    </div>
+                    <div id='mobile-buttons-display'>
+                        <h2 id='nav-home-btn'>Home</h2>
+                        <h2 id='nav-contact-btn'>Contact</h2>
+                        <h2 id='nav-projects-btn'>Projects</h2>
+                        <h2 id='nav-blog-btn'>Blog</h2>
+                        <h2 id='nav-ps5-btn'>PS5</h2>
+                    </div>
+                </div>
+                <div id='mobile-socials-display'> <!-- Social Media Logos div -->
+                    <img src="/src/assets/github.svg" class='mobile-social-buttons' alt="GitHub Logo"
+                        id='github-nav-logo'>
+                    <img src="/src/assets/youtube.svg" class='mobile-social-buttons' alt="YouTube Logo"
+                        id='youtube-nav-logo'>
+                </div>
+            </nav>
+
+            <!-- Entry point of the website -->
+            <div class="body">
+                <h1 class='header-h1'>PlayStation 5 Games</h1>
+                <p class='header-p'>Playable on the actual PlayStation 5 Console, by visiting <a
+                        href="https://www.frontendtitan.com/ps5">frontendtitan.com/ps5</a></p><br>
+
+                <div class="flex-body">
+                    <div class="card">
+                        <h1>Guess The Number</h1>
+                        <button onclick="window.location.href='guess-the-number'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Tic-Tac-Toe</h1>
+                        <button onclick="window.location.href='tic-tac-toe'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Rock Paper Scissors</h1>
+                        <button onclick="window.location.href='rock-paper-scissors'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Hangman</h1>
+                        <button onclick="window.location.href='hangman'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Blackjack</h1>
+                        <button onclick="window.location.href='blackjack'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Minesweeper</h1>
+                        <button onclick="window.location.href='minesweeper'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Snake</h1>
+                        <button onclick="window.location.href='snake'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Pong</h1>
+                        <button onclick="window.location.href='pong'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Space Invaders</h1>
+                        <button onclick="window.location.href='space-invaders'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Memory Matching Game</h1>
+                        <button onclick="window.location.href='memory-matching-game'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Tetris</h1>
+                        <button onclick="window.location.href='tetris'">Play</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Entry point of the website -->
+        </main>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const elements = document.querySelectorAll('.flex-body > *')
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Start the animation 2 seconds after the element is scrolled into view
+                        const delay = Array.from(elements).indexOf(entry.target) * 0.25
+                        entry.target.style.animationDelay = `${delay}s`
+                        entry.target.style.animationPlayState = 'running'
+                        observer.unobserve(entry.target)
+                    }
+                })
+            }, {
+                threshold: 0.1 // Adjust this value to control when the callback is triggered
+            })
+
+            elements.forEach((element) => {
+                // Initially pause the animation
+                element.style.animationPlayState = 'paused'
+                observer.observe(element)
+            })
+        });
+    </script>
+</body>
+
+</html>

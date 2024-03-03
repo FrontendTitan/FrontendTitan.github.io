@@ -4,6 +4,7 @@ interface iNav {
     contactButton: HTMLHeadingElement,
     projectsButton: HTMLHeadingElement,
     blogButton: HTMLHeadingElement,
+    ps5Button: HTMLHeadingElement,
     githubLogo: HTMLImageElement,
     youtubeLogo: HTMLImageElement,
 }
@@ -14,6 +15,7 @@ const nav: iNav = {
     contactButton: document.getElementById('nav-contact-btn') as HTMLHeadingElement,
     projectsButton: document.getElementById('nav-projects-btn') as HTMLHeadingElement,
     blogButton: document.getElementById('nav-blog-btn') as HTMLHeadingElement,
+    ps5Button: document.getElementById('nav-ps5-btn') as HTMLHeadingElement,
     githubLogo: document.getElementById('github-nav-logo') as HTMLImageElement,
     youtubeLogo: document.getElementById('youtube-nav-logo') as HTMLImageElement,
 }
@@ -36,6 +38,10 @@ nav.projectsButton.addEventListener('click', () => {
 
 nav.blogButton.addEventListener('click', () => {
     window.location.href = '/blog'
+})
+
+nav.ps5Button.addEventListener('click', () => {
+    window.location.href = '/ps5'
 })
 
 nav.githubLogo.addEventListener('click', () => {

@@ -1,0 +1,446 @@
+<!--
+    * It's one of the main games for the YouTube Video. As of a result, it will contain cleaner code.
+
+    * Please open the game, alongside the Developer Console for the best debugging experience.
+    * FrontendTitan - 2024 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Snake</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: black;
+            padding: 0;
+            margin: 0;
+            color: white;
+            font-family: sans-serif;
+            user-select: none;
+        }
+
+        #gameContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            border: 1px solid white;
+            border-radius: 10px;
+            cursor: crosshair;
+        }
+
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 150px;
+        }
+
+        #best {
+            position: absolute;
+            top: 30px;
+            left: 150px;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        #controls button {
+            margin: 0 5px;
+            padding: 10px 20px;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+    <div id="score">Score: 0</div>
+    <div id="best">Best: 0</div>
+
+    <div>
+        <canvas id="gameCanvas" width="400" height="800"></canvas>
+        <div id="controls">
+            <button id="moveLeftBtn"> &larr;</button>
+            <button id="shootBtn">Shoot</button>
+            <button id="moveRightBtn">&rarr;</button>
+            <button id="startBtn">Start Game</button>
+            <button id="pauseBtn">Pause</button>
+        </div>
+        <p style='text-align: center;'>Use Cursor To Control Easier & Click To Shoot</p>
+    </div>
+
+    <script>
+        let canvas = document.getElementById('gameCanvas')
+        let ctx = canvas.getContext('2d')
+
+        window.addEventListener('resize', resizeCanvas)
+
+        let score = 0
+        let bestScore = localStorage.getItem('bestScore') || 0 // Retrieve the best score from local storage
+        let gameInterval
+
+        let player = {
+            x: canvas.width / 2,
+            y: canvas.height - 30,
+            width: 50,
+            height: 20,
+            dx: 2
+        }
+
+        let bullets = []
+        let enemies = []
+
+        let enemySpeed = 2      // Global variable for enemy speed
+        let maxEnemies = 20     // Global variable for maximum enemies
+        let playerSpeed = 10    // Global variable for player speed
+        let enemyWidth = 50     // Global variable for enemy width
+        let bulletSpeed = 10    // Global variable for bullet speed
+
+        let moveLeftInterval    // Global variable for move left interval
+        let moveRightInterval   // Global variable for move right interval
+        let shootInterval       // Global variable for shoot interval
+
+        /**
+         * Draws the player on the canvas.
+         */
+        function drawPlayer() {
+            ctx.fillStyle = 'white'
+            ctx.fillRect(player.x, player.y, player.width, player.height)
+        }
+
+        /**
+         * Draws the bullets on the canvas and updates their position.
+         */
+        function drawBullets() {
+            bullets.forEach((bullet, index) => {
+                ctx.fillStyle = 'white'
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height)
+
+                bullet.y -= bulletSpeed
+
+                if (bullet.y < 0) {
+                    bullets.splice(index, 1)
+                }
+            })
+        }
+
+        /**
+         * Draws the enemies on the canvas and updates their position.
+         */
+        function drawEnemies() {
+            enemies.forEach((enemy, index) => {
+                ctx.fillStyle = 'red'
+                ctx.save() // Save the current transformation matrix
+                ctx.translate(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2) // Translate to the center of the enemy
+                ctx.rotate(Math.PI) // Rotate by 180 degrees (pi radians) to point downwards
+                ctx.beginPath()
+                ctx.moveTo(-enemy.width / 2, enemy.height / 2)
+                ctx.lineTo(0, -enemy.height / 2)
+                ctx.lineTo(enemy.width / 2, enemy.height / 2)
+                ctx.closePath()
+                ctx.fill()
+                ctx.restore() // Restore the previous transformation matrix
+
+                enemy.y += enemy.dy
+
+                if (enemy.y > canvas.height) {
+                    repositionEnemy(enemy)
+                }
+            })
+        }
+
+        /**
+         * Repositions the enemy to a random position at the top of the canvas.
+         * @param {Object} enemy - The enemy object to reposition.
+         */
+        function repositionEnemy(enemy) {
+            enemy.x = Math.random() * (canvas.width - enemyWidth)
+            enemy.y = -20
+        }
+
+        /**
+         * Updates the score displayed on the page.
+         */
+        function updateScore() {
+            document.getElementById('score').innerText = 'Score: ' + score
+        }
+
+        /**
+         * Updates the best score displayed on the page and saves it in local storage.
+         */
+        function updateBestScore() {
+            bestScore = Math.max(score, bestScore)
+            localStorage.setItem('bestScore', bestScore)
+            document.getElementById('best').innerText = 'Best: ' + bestScore
+        }
+
+        /**
+         * The main game loop that updates and renders the game elements.
+         */
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+            drawPlayer()
+            drawBullets()
+            drawEnemies()
+
+            /**
+             * Generates new enemies randomly on the canvas.
+             * If the random number is less than 0.01 and the number of enemies is less than the maximum allowed,
+             * a new enemy object is created and added to the enemies array.
+             * The enemy's x position is set randomly within the canvas width minus the enemy's width.
+             * The enemy's y position is set to -20, which means it will start above the canvas.
+             * The enemy's width and height are set to the specified values.
+             * The enemy's dy (delta y) is set to the enemySpeed value.
+             */
+            if (Math.random() < 0.02 && enemies.length < maxEnemies) {
+                enemies.push({
+                    x: Math.random() * (canvas.width - enemyWidth),
+                    y: -20,
+                    width: enemyWidth,
+                    height: 20,
+                    dy: enemySpeed
+                })
+            }
+
+            /**
+             * Checks for collision between bullets and enemies, and updates the score accordingly.
+             * If a bullet touches an enemy, both the bullet and the enemy are removed from the game and the score is increased by 1.
+             * In Conclusion, it is the code that kills enemies
+             * @param {Array} bullets - An array of bullet objects.
+             * @param {Array} enemies - An array of enemy objects.
+             */
+            bullets.forEach((bullet, i) => {
+                enemies.forEach((enemy, j) => {
+                    if (
+                        bullet.x < enemy.x + enemy.width &&
+                        bullet.x + bullet.width > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + bullet.height > enemy.y
+                    ) {
+                        bullets.splice(i, 1)
+                        enemies.splice(j, 1)
+                        score++
+                        updateScore()
+                        updateBestScore()
+                        playDestroyedShipSound()
+                    }
+                })
+            })
+
+            /**
+             * Check if any enemy has touched the bottom of the canvas.
+             * If an enemy touches the bottom, the game is over.
+             * This function clears the game interval, displays the start button, shows a game over alert, and reloads the page.
+             *
+             * @param {Array} enemies - An array of enemy objects.
+             */
+            enemies.forEach((enemy, index) => {
+                if (enemy.y + enemy.height >= canvas.height) {
+                    // Enemy touched the bottom, game over
+                    clearInterval(gameInterval)
+                    document.getElementById('startBtn').style.display = 'block'
+                    alert('Game Over! You lost.')
+                    location.reload()
+                }
+            })
+
+            /**
+             * Checks the position of the player in the game and ensures that it stays within the boundaries of the canvas.
+             * If the player's x-coordinate is less than 0, it sets the x-coordinate to 0 to prevent it from going off the left side of the canvas.
+             * If the player's x-coordinate plus its width is greater than the width of the canvas, it sets the x-coordinate to the difference between the canvas width and the player's width.
+             * This prevents the player from going off the right side of the canvas.
+             */
+            if (player.x < 0) player.x = 0
+            if (player.x + player.width > canvas.width)
+                player.x = canvas.width - player.width
+        }
+
+        /**
+         * Start the game when the start button is clicked.
+         */
+        document.getElementById('startBtn').addEventListener('click', function () {
+            gameInterval = setInterval(gameLoop, 20)
+            resizeCanvas()
+            this.style.display = 'none'
+        })
+
+        /**
+         * Pause the game when the pause button is clicked.
+         */
+        document.getElementById('pauseBtn').addEventListener('click', function () {
+            clearInterval(gameInterval)
+            document.getElementById('startBtn').style.display = 'block'
+        })
+
+        /**
+         * Move the player left when the left arrow key is pressed.
+         * Move the player right when the right arrow key is pressed.
+         * Shoot a bullet when the spacebar key is pressed.
+         */
+        window.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') {
+                player.x -= playerSpeed
+            }
+            if (e.key === 'ArrowRight') {
+                player.x += playerSpeed
+            }
+            if (e.key === ' ') {
+                bullets.push({
+                    x: player.x + player.width / 2,
+                    y: player.y,
+                    width: 5,
+                    height: 10,
+                    dy: bulletSpeed
+                })
+            }
+        })
+
+        /**
+         * Move the player left when the move left button is clicked or held down.
+         */
+        document.getElementById('moveLeftBtn').addEventListener('mousedown', function () {
+            moveLeftInterval = setInterval(function () {
+                player.x -= playerSpeed
+            }, 50)
+        })
+
+        document.getElementById('moveLeftBtn').addEventListener('mouseup', function () {
+            clearInterval(moveLeftInterval)
+        })
+
+        /**
+         * Move the player right when the move right button is clicked or held down.
+         */
+        document.getElementById('moveRightBtn').addEventListener('mousedown', function () {
+            moveRightInterval = setInterval(function () {
+                player.x += playerSpeed
+            }, 50)
+        })
+
+        document.getElementById('moveRightBtn').addEventListener('mouseup', function () {
+            clearInterval(moveRightInterval)
+        })
+
+        /**
+         * Shoot a bullet when the shoot button is clicked or held down.
+         */
+        document.getElementById('shootBtn').addEventListener('mousedown', function () {
+            shootInterval = setInterval(function () {
+                bullets.push({
+                    x: player.x + player.width / 2,
+                    y: player.y,
+                    width: 5,
+                    height: 10,
+                    dy: bulletSpeed
+                })
+            }, 200)
+        })
+
+        document.getElementById('shootBtn').addEventListener('mouseup', function () {
+            clearInterval(shootInterval)
+        })
+
+        /**
+         * Make the player follow the cursor.
+         */
+        canvas.addEventListener('mousemove', function (e) {
+            let rect = canvas.getBoundingClientRect()
+            player.x = e.clientX - rect.left - player.width / 2
+        })
+
+        /**
+         * Shoot a bullet when the canvas is clicked.
+         */
+        canvas.addEventListener('click', function (e) {
+            bullets.push({
+                x: player.x + player.width / 2,
+                y: player.y,
+                width: 5,
+                height: 10,
+                dy: bulletSpeed
+            })
+        })
+
+        /**
+         * Resizes the canvas and adjusts the positions of the player and enemies when the window is resized.
+         */
+        function resizeCanvas() {
+            if (window.innerHeight > 800) {
+                canvas.height = window.innerHeight - 300
+            }
+
+            if (window.innerWidth > 400) {
+                canvas.width = window.innerWidth - 100
+            }
+
+            // Adjust player's position when window is resized
+            player.y = canvas.height - player.height
+            player.x = Math.max(0, Math.min(player.x, canvas.width - player.width))
+
+            // Adjust enemies' position and size when window is resized
+            enemies.forEach(enemy => {
+                enemy.y = Math.max(0, Math.min(enemy.y, canvas.height - enemy.height))
+                enemy.x = Math.max(0, Math.min(enemy.x, canvas.width - enemy.width))
+            })
+        }
+
+        /**
+         * Creates an audio context and plays a square wave sound for a specified duration.
+         * @param {number} frequency - The frequency of the oscillator in Hz.
+         * @param {number} duration - The duration of the sound in milliseconds.
+         */
+        function playDestroyedShipSound() {
+            // Create an audio context
+            var audioContext = new (window.AudioContext || window.webkitAudioContext)()
+
+            // Create an oscillator and connect it to the audio context
+            let oscillator = audioContext.createOscillator()
+            oscillator.type = 'square'
+            oscillator.frequency.value = 600 // Higher pitch in Hz
+
+            // Play the sound
+            oscillator.connect(audioContext.destination)
+            oscillator.start()
+            setTimeout(() => { oscillator.stop() }, 200)
+        }
+
+        // Retrieve the best score from local storage and update the display
+        document.getElementById('best').innerText = 'Best: ' + bestScore;
+    </script>
+</body>
+
+</html>
