@@ -47,8 +47,7 @@
             <div class="body">
                 <h1 class='header-h1'>PlayStation 5 Games</h1>
                 <p class='header-p'>Playable on the actual PlayStation 5 Console, by visiting <a
-                        href="https://www.frontendtitan.com/ps5">frontendtitan.com/ps5</a></p>
-                <a href="http://192.168.0.10:5500">DEV SERVER</a><br>
+                        href="https://www.frontendtitan.com/ps5">frontendtitan.com/ps5</a></p><br>
 
                 <div class="flex-body">
                     <div class="card">
@@ -95,13 +94,51 @@
                         <h1>Tetris</h1>
                         <button onclick="window.location.href='tetris'">Play</button>
                     </div>
+                    <div class="card">
+                        <h1>Flappy Bird</h1>
+                        <button onclick="window.location.href='flappy-bird'">Play</button>
+                    </div>
+                    <div class="card">
+                        <h1>Google Dino Game - Made by FrontendTitan</h1>
+                        <button onclick="window.location.href='google-dino-game'">Play</button>
+                    </div>
                 </div>
             </div>
             <!-- Entry point of the website -->
         </main>
     </div>
 
+    <div id="dev-panel-ps5">
+        <a href="http://192.168.0.10:5500">DEV SERVER <span id="dev-browser"></span></a>
+        <style>
+            #dev-panel-ps5 {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                background: #000;
+                color: #fff;
+                padding: 10px;
+                border-top-left-radius: 10px;
+                cursor: pointer;
+                text-decoration: none;
+                border: 1px solid #fff;
+                display: none;
+            }
+        </style>
+    </div>
+
+
     <script>
+
+        // Don't Worry bro, just because u have found this code don't
+        // Mean u can hack me. it's just for my local development server
+        // Chances are that it might redirect you to a device on your
+        // network, but the chances are very slim.
+        if (navigator.vendor === "Sony Interactive Entertainment Inc." &&
+            navigator.platform === "PlayStation 5") {
+            document.getElementById('dev-panel-ps5').style.display = 'block'
+        }
+
         window.addEventListener('DOMContentLoaded', (event) => {
             const elements = document.querySelectorAll('.flex-body > *')
 
@@ -124,7 +161,11 @@
                 element.style.animationPlayState = 'paused'
                 observer.observe(element)
             })
-        });
+        })
+
+        setInterval(() => {
+
+        }, 1000)
     </script>
 </body>
 

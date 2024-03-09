@@ -16,6 +16,8 @@
             align-items: center;
             flex-direction: column;
             font-family: sans-serif;
+            background-color: rgb(18, 18, 18);
+            color: white;
         }
 
         .board {
@@ -26,7 +28,7 @@
             width: 300px;
             height: 300px;
             margin: 0 auto;
-            border: 1px solid #000;
+            border: 1px solid #ffffff;
             padding: 10px;
             border-radius: 10px;
         }
@@ -39,7 +41,7 @@
             /* Updated font-size */
             font-weight: bold;
             cursor: pointer;
-            background-color: #eee;
+            background-color: rgb(40, 40, 40);
             border-radius: 6px;
         }
 
@@ -66,7 +68,7 @@
             top: 10px;
             left: 10px;
             text-decoration: none;
-            color: #000;
+            color: white;
         }
 
         a:nth-child(2) {
@@ -104,6 +106,7 @@
         const cells = document.querySelectorAll('.cell')
         let currentPlayer = 'x'
         let gameEnded = false
+        let moves = 0
 
         cells.forEach(cell => {
             cell.addEventListener('click', handleCellClick)
@@ -118,6 +121,7 @@
                 cell.classList.add(currentPlayer)
                 currentPlayer = currentPlayer === 'x' ? 'o' : 'x'
                 document.querySelector('.player-text').textContent = `Player ${currentPlayer.toUpperCase()}'s Turn`
+                moves++
                 checkWinner()
             }
         }
@@ -144,9 +148,18 @@
                     highlightWinnerCells(cellA, cellB, cellC)
                     setTimeout(() => {
                         alert(`Player ${cellA.textContent} wins!`)
+                        location.reload()
                     }, 500)
-                    break
+                    return
                 }
+            }
+
+            if (moves === 9) {
+                gameEnded = true
+                setTimeout(() => {
+                    alert("It's a tie!")
+                    location.reload()
+                }, 500)
             }
         }
 

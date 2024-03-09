@@ -14,10 +14,6 @@
     <title>FrontendTitan - Tetris</title>
 
     <style>
-        * {
-            color-scheme: dark;
-        }
-
         body {
             display: flex;
             justify-content: center;
@@ -25,12 +21,14 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
         }
 
         canvas {
             border: 1px solid #ccc;
             background-color: rgb(255, 255, 255) !important;
-            box-shadow: 0 0 100px 10px rgb(255, 255, 255);
+            box-shadow: 0 0 50px 0px rgba(255, 255, 255, 0.634);
             border-radius: 10px;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 0;
@@ -58,7 +56,7 @@
             cursor: pointer;
             font-size: 16px;
             border-radius: 4px;
-            box-shadow: 0 0 20px 0 green;
+            box-shadow: 0 0 10px 0 green;
             transition: cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
             animation: popIn 0.5s ease-in-out;
         }
@@ -87,12 +85,12 @@
 
         #controls-container button {
             background-color: #4CAF50;
+            border-radius: 6px;
             color: #fff;
             border: none;
             cursor: pointer;
-            font-size: 32px;
-            border-radius: 100%;
             margin-bottom: 10px;
+            font-size: large;
             height: 10vh;
             width: 10vh;
             max-height: 10vh;
@@ -118,10 +116,6 @@
 
         .controls-button-left-gap {
             margin-right: 5px;
-        }
-
-        #controls-button-speed-increase {
-            transform: translateY(4px) !important;
         }
 
         @keyframes popIn {
@@ -198,8 +192,8 @@
                 <button id='controls-button-right'>&rarr;</button>
             </div>
             <div>
-                <button id='controls-button-rotate' class='controls-button-left-gap'>&#8635;</button>
-                <button id='controls-button-speed-increase'>⚡</button>
+                <button id='controls-button-rotate' class='controls-button-left-gap'>Rotate</button>
+                <button id='controls-button-speed-increase'>Fast</button>
             </div>
         </div>
     </div>
@@ -236,7 +230,8 @@
         const canvas = document.getElementById('game')
         const context = canvas.getContext('2d')
 
-        canvas.style.height = '90vh'
+        canvas.style.height = 'calc(100vh - 100px)'
+        canvas.style.maxHeight = '800px'
 
         // Define the size of each grid cell
         const grid = 20
@@ -523,7 +518,7 @@
 
         const startButton = document.getElementById('startButton')
         startButton.addEventListener('click', () => {
-            document.querySelector('canvas').style.boxShadow = "0 0 1000px 50px rgb(255, 255, 255)"
+            document.querySelector('canvas').style.boxShadow = "0 0 100px 30px rgb(255, 255, 255)"
 
             startButton.remove()
 
@@ -608,6 +603,9 @@
                 if (collide()) {
                     position.x++
                 }
+
+                // Set the fall speed of the tetrimino to default
+                dropInterval = 1000 - (level * 50)
             })
 
             /**
@@ -620,6 +618,9 @@
                 if (collide()) {
                     position.x--
                 }
+
+                // Set the fall speed of the tetrimino to default
+                dropInterval = 1000 - (level * 50)
             })
 
             /**
@@ -628,6 +629,9 @@
              */
             document.getElementById('controls-button-rotate').addEventListener('click', () => {
                 playerRotate(1)
+
+                // Set the fall speed of the tetrimino to default
+                dropInterval = 1000 - (level * 50)
             })
 
             /**
@@ -636,11 +640,13 @@
              * If the tetromino collides with the game board, the y position is decremented back,
              * the tetromino is merged with the game board, the completed rows are removed,
              * and the game is reset.
+             * 
+             * Making it hold to increase speed poses loads of challenges, so it is best that the
+             * player just spam clicks the button to increase the speed.
              */
             const speedIncreaseButton = document.getElementById('controls-button-speed-increase')
-            let buttonHoldInterval
 
-            speedIncreaseButton.addEventListener('mousedown', () => {
+            speedIncreaseButton.addEventListener('click', () => {
                 position.y++
                 if (collide()) {
                     position.y--
@@ -648,20 +654,16 @@
                     removeRow()
                     reset()
                 }
-                buttonHoldInterval = setInterval(() => {
-                    position.y++
-                    if (collide()) {
-                        position.y--
-                        merge()
-                        removeRow()
-                        reset()
-                    }
+
+                // Set the fall speed of the tetromino to faster
+                dropInterval = 100
+
+                // Reset the fall speed to slower after 100ms
+                setTimeout(() => {
+                    dropInterval = 1000 - (level * 50)
                 }, 100)
             })
 
-            speedIncreaseButton.addEventListener('mouseup', () => {
-                clearInterval(buttonHoldInterval)
-            })
 
             document.getElementById('pauseButton').addEventListener('click', () => {
                 if (dropInterval !== Number.MAX_SAFE_INTEGER) {

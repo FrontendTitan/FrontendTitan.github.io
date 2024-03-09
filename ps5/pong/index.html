@@ -24,352 +24,322 @@
             font-family: Arial, sans-serif;
         }
 
-        #pong {
-            position: relative;
-            width: 800px;
-            height: 400px;
-            background-color: black;
-            border: 1px solid white;
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #121212;
+            margin: 10px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px 5px rgba(255, 255, 255, 0.5);
+            box-shadow: 0px 0px 100px 0px #2c2b2b;
+            transition: box-shadow 1s cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
-        .paddle {
-            position: absolute;
-            width: 10px;
-            height: 60px;
-            background-color: rgb(103, 103, 103) !important;
-            border-radius: 2px;
-        }
-
-        #player1 {
-            left: 10px;
-            top: 170px;
-        }
-
-        #player2 {
-            right: 10px;
-            top: 170px;
-        }
-
-        #ball {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: rgb(103, 103, 103);
-            border-radius: 50%;
-        }
-
-        #score {
-            margin-bottom: 10px;
+        #start,
+        .speed-btn {
+            display: block;
+            margin: 10px 5px;
+            padding: 10px 50px;
+            font-size: 20px;
+            background-color: #121212;
+            border-radius: 10px;
             color: white;
-            font-size: 20px;
-        }
-
-        #container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .controls button {
-            margin: 0 5px;
-            padding: 5px 10px;
-            font-size: 20px;
-            background-color: #ffffff;
             border: none;
-            border-radius: 10px;
             cursor: pointer;
-            width: 395px;
-            border: 1px solid white;
         }
 
-        .controls button:hover {
-            background-color: #f2f2f2;
-        }
-
-        .controls button:active {
-            background-color: #000000;
-        }
-
-        #start {
-            margin-top: 10px;
-            padding: 5px 10px;
-            font-size: 20px;
-            background-color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 800px;
-            border: 1px solid white;
-        }
-
-        #start:hover {
-            background-color: #f2f2f2;
-        }
-
-        #start:active {
-            background-color: #000000;
-        }
-
-        #start:disabled {
-            background-color: #f2f2f2;
-            color: #000000;
-        }
-
-        a {
+        .address-links {
             position: absolute;
             top: 10px;
             left: 10px;
             text-decoration: none;
-            color: #000;
+            color: white;
         }
 
-        a:nth-child(2) {
+        .address-links:nth-child(2) {
             top: 30px;
         }
 
-        a:hover {
+        .address-links:hover {
             text-decoration: underline;
         }
 
-        a:active {
+        .address-links:active {
             color: #f00;
         }
     </style>
 </head>
 
 <body>
-    <a href="/">Back To Home</a>
-    <a href="/ps5">Game Picker</a>
+    <a class="address-links" href="/">Back To Home</a>
+    <a class="address-links" href="/ps5">Game Picker</a>
 
     <div id='container'>
-        <div id="score">Player 1: 0 | Player 2: 0</div>
-
-        <div id="pong"> <!-- The game container -->
-            <div id="player1" class="paddle"></div>
-            <div id="player2" class="paddle"></div>
-            <div id="ball"></div>
+        <p>Use <b>Cursor</b> To Control or <b>Tap</b> on Mobile</p>
+        <canvas id="canvas"></canvas>
+        <div style="display: flex; justify-content: center;">
+            <button id="start">Start</button>
+            <button class="speed-btn" onclick="ballSpeedX += 2">Increase Speed</button>
+            <button class="speed-btn" onclick="ballSpeedX -= 2">Decrease Speed</button>
         </div>
-
-        <div class="controls"> <!-- The controls for player 1 -->
-            <button onclick="movePaddle('up')">&uArr;</button>
-            <button onclick="movePaddle('down')">&dArr;</button>
-        </div>
-
-        <button id="start">Start</button>
     </div>
 
+    <div id="popup"
+        style="display: none; position: fixed; width: 100%; height: 100%; top: 0; left: 0; background: rgb(0, 0, 0); color: white; text-align: center; padding-top: 20%;">
+        <h1>Your browser window is too small!</h1>
+        <p>Please resize your browser window to at least 700x600.</p>
+
+        <a href="/">Back To Home</a>
+        <a href="/ps5">Game Picker</a>
+    </div>
 
     <script>
-        // Get the necessary elements from the DOM
-        const pong = document.getElementById('pong')                // The main container for the game
-        const player1 = document.getElementById('player1')          // The element representing player 1's paddle
-        const player2 = document.getElementById('player2')          // The element representing player 2's paddle
-        const ball = document.getElementById('ball')                // The element representing the ball
-        const scoreElement = document.getElementById('score')       // The element displaying the score
-        const startButton = document.getElementById('start')       // The element displaying the score
+        function checkWindowSize() {
+            const popup = document.getElementById('popup')
 
-        // Initialize the ball's position and speed
-        const intializerValue = Math.random() < 0.4 ? true : false
-        let ballX = 400                                             // The x-coordinate of the ball
-        let ballY = Math.floor(Math.random() * (200 - 50 + 1)) + 50 // The y-coordinate of the ball
-        let ballSpeedX = !intializerValue ? -2 : 2                  // The speed of the ball along the x-axis
-        let ballSpeedY = !intializerValue ? 2 : -2                  // The speed of the ball along the y-axis
+            if (window.innerWidth < 700 || window.innerHeight < 600) {
+                popup.style.display = 'block'
+            } else {
+                popup.style.display = 'none'
+            }
+        }
 
-        // Initialize the players' paddle positions
-        let player1Y = 170                                          // The y-coordinate of player 1's paddle
-        let player2Y = 170                                          // The y-coordinate of player 2's paddle
-        const paddleSpeed = 20                                      // The speed at which the paddles move
+        // Check window size on load
+        checkWindowSize()
 
-        // Initialize the players' scores
-        let player1Score = 0 // Player 1's score
-        let player2Score = 0 // Player 2's score
+        // Check window size on resize
+        window.addEventListener('resize', checkWindowSize)
 
-        // Generate a random number to determine if the AI can move
-        const randomHit = Math.floor(Math.random() * 10) + 1        // Random number between 1 and 10
-        let aiCanMove = true                                        // Flag indicating if the AI can move
-        let AIhit = 0                                               // Counter for AI hits
+        const canvas = document.getElementById('canvas')
+        const context = canvas.getContext('2d')
 
-        let audioContext // Declare audioContext variable
+        // Set canvas size
+        canvas.width = window.innerWidth > 1000 ? 1000 : window.innerWidth - 100
+        canvas.height = 400
 
-        /**
-         * Updates the game state and renders the game elements.
-         * 
-         * This function is responsible for updating the position of the ball, handling collisions with walls and paddles,
-         * controlling the AI movement, updating the score, and checking win and lose conditions.
-         * 
-         * @returns {void}
-         */
+        document.addEventListener('resize', () => {
+            canvas.width = window.innerWidth > 1000 ? 1000 : window.innerWidth - 100
+        })
+
+        // Paddle properties
+        const paddleWidth = 10
+        const paddleHeight = 80
+        let player1Y = canvas.height / 2 - paddleHeight / 2
+        let player2Y = canvas.height / 2 - paddleHeight / 2
+        const paddleSpeed = 5
+
+        // Ball properties
+        const ballSize = 10
+        let ballX = canvas.width / 2 - ballSize / 2
+        let ballY = canvas.height / 2 - ballSize / 2
+        let ballSpeedX = 2
+        let ballSpeedY = 2
+
+        // Game properties
+        let player1Score = 0
+        let player2Score = 0
+        const winningScore = 5
+        let isGameStarted = false
+        let willAIMissBall = false
+
+        // Move the paddles
+        function movePaddle(direction, mouseY) {
+            if (direction === 'up') {
+                player1Y -= paddleSpeed
+            } else if (direction === 'down') {
+                player1Y += paddleSpeed
+            }
+
+            // Limit paddle movement within the canvas
+            if (player1Y < 0) {
+                player1Y = 0
+            } else if (player1Y + paddleHeight > canvas.height) {
+                player1Y = canvas.height - paddleHeight
+            }
+        }
+
+        // Update game state
         function update() {
-            // Update ball position
+            if (!isGameStarted) {
+                return
+            }
+
+            // Move the ball
             ballX += ballSpeedX
             ballY += ballSpeedY
 
-            // Ball collision with walls
-            if (ballY <= 0 || ballY >= 390) {
-                ballSpeedY *= -1
-                playWallHitSound()
-            }
-
             // Ball collision with paddles
-            if (ballX <= 20 && ballY >= player1Y && ballY <= player1Y + 60) {
+            if (
+                ballX <= paddleWidth &&
+                ballY + ballSize >= player1Y &&
+                ballY <= player1Y + paddleHeight
+            ) {
                 ballSpeedX *= -1
-                playPaddleHitSound()
-            }
-
-            if (ballX >= 770 && ballY >= player2Y && ballY <= player2Y + 60) {
+                playerHitBall()
+            } else if (
+                ballX + ballSize >= canvas.width - paddleWidth &&
+                ballY + ballSize >= player2Y &&
+                ballY <= player2Y + paddleHeight
+            ) {
                 ballSpeedX *= -1
-                setTimeout(aiHitBall, 100)
-                playPaddleHitSound()
+                AIHitBall()
             }
 
-            // AI for the right side
-            const aiThreshold = 5   // Adjust this value to change the AI's sensitivity
-            const regularSpeed = 2  // The AI's regular speed
-            const missSpeed = 1     // The AI's speed when missing the ball
-
-            const aiSpeed = randomHit !== AIhit ? regularSpeed : missSpeed
-
-            if (ballX > 400 && ballY < player2Y + aiThreshold && player2Y > 0 && aiCanMove) {
-                player2Y -= aiSpeed
-            } else if (ballX > 400 && ballY > player2Y + aiThreshold && player2Y < 330 && aiCanMove) {
-                player2Y += aiSpeed
+            // Ball collision with walls
+            if (ballY <= 0 || ballY + ballSize >= canvas.height) {
+                ballSpeedY *= -1
             }
 
-            player2.style.top = player2Y + 'px'
-
-            ball.style.left = ballX + 'px'
-            ball.style.top = ballY + 'px'
-
-            // Check win and lose conditions and if the ball is out the game area
-            let restart = false
+            // Update player scores
             if (ballX <= 0) {
                 player2Score++
-
-                if (player2Score >= 3) {
-                    alert("Player 2 wins!")
-                    restart = true
-                } else {
-                    resetGame()
-                }
-            } else if (ballX >= 790) {
+                resetBall()
+            } else if (ballX + ballSize >= canvas.width) {
                 player1Score++
+                document.getElementById('canvas').style.boxShadow = '0px 0px 100px 0px #2c2b2b'
+                willAIMissBall = false
+                resetBall()
+            }
 
-                if (player1Score >= 3) {
-                    alert("Player 1 wins!")
-                    restart = true
-                } else {
-                    resetGame()
+            movePaddle2()
+        }
+
+        function movePaddle2() {
+            // Calculate the center of the paddle
+            const paddle2Center = player2Y + paddleHeight / 2
+
+            // Calculate the center of the ball
+            const ballCenter = ballY + ballSize / 2
+
+            // Calculate the distance between the ball and the right wall
+            const distance = canvas.width - ballX
+
+            // Move the paddle based on the position of the ball
+            if (!willAIMissBall && distance < 300) {
+                if (ballCenter < paddle2Center) {
+                    player2Y -= paddleSpeed // Modified: Changed to decrease paddle position
+                } else if (ballCenter > paddle2Center) {
+                    player2Y += paddleSpeed // Modified: Changed to increase paddle position
                 }
             }
 
-            if (restart) {
-                player1Score = 0
-                player2Score = 0
-
-                scoreElement.textContent = `${player1Score} : ${player2Score}`
-
-                resetGame()
-            }
-
-            // Update score
-            scoreElement.textContent = `${player1Score} : ${player2Score}`
-
-            requestAnimationFrame(update)
-        }
-
-        /**
-         * Function to handle the AI hitting the ball.
-         * Disables AI movement temporarily and enables it after 5 seconds.
-         * Triggered when the ball is hit by the AI.
-         */
-        function aiHitBall() {
-            aiCanMove = false
-            AIhit++
-
-            setTimeout(() => {
-                aiCanMove = true
-            }, 5000)
-        }
-
-        /**
-         * Resets the game by initializing the ball position and speed, as well as the player positions.
-         */
-        function resetGame() {
-            const goingUp = Math.random() < 0.4 ? true : false
-
-            ballX = 400
-            ballY = 200
-            ballSpeedX = !goingUp ? -2 : 2
-            ballSpeedY = !goingUp ? 2 : -2
-            player1Y = 170
-            player2Y = 170
-
-            playWinSound()
-        }
-
-        /**
-         * Moves the paddle in the specified direction.
-         * @param {string} direction - The direction to move the paddle ('up' or 'down').
-         */
-        function movePaddle(direction) {
-            if (direction === 'up' && player1Y > 10) {
-                player1Y -= paddleSpeed
-                player1.style.top = player1Y + 'px'
-            } else if (direction === 'down' && player1Y < 330) {
-                player1Y += paddleSpeed
-                player1.style.top = player1Y + 'px'
+            // Limit paddle movement within the canvas
+            if (player2Y < 0) {
+                player2Y = 0
+            } else if (player2Y + paddleHeight > canvas.height) {
+                player2Y = canvas.height - paddleHeight
             }
         }
 
-        /**
-         * Plays a sound effect for when the ball hits a wall.
-         */
-        function playWallHitSound() {
-            let oscillator = audioContext.createOscillator()
-            oscillator.type = 'square'
-            oscillator.frequency.value = 300 // Lower pitch for wall hit
-            oscillator.connect(audioContext.destination)
-            oscillator.start()
-            setTimeout(() => { oscillator.stop() }, 200)
+        // Set the initial value of willMissBall
+        willMissBall = Math.random() < 0.5
+
+        // Reset the ball position
+        function resetBall() {
+            ballX = canvas.width / 2 - ballSize / 2
+            ballY = canvas.height / 2 - ballSize / 2
+            ballSpeedX *= -1
+            ballSpeedY *= Math.random() > 0.5 ? 1 : -1
         }
 
-        /**
-         * Plays a sound effect for when the ball hits a paddle.
-         */
-        function playPaddleHitSound() {
-            let oscillator = audioContext.createOscillator()
-            oscillator.type = 'square'
-            oscillator.frequency.value = 600 // Higher pitch for paddle hit
-            oscillator.connect(audioContext.destination)
-            oscillator.start()
-            setTimeout(() => { oscillator.stop() }, 200)
+        // Render game objects
+        function render() {
+            // Clear canvas
+            context.clearRect(0, 0, canvas.width, canvas.height)
+
+            // Draw paddles
+            context.fillStyle = '#ffffff'
+            context.fillRect(0, player1Y, paddleWidth, paddleHeight)
+            context.fillRect(canvas.width - paddleWidth, player2Y, paddleWidth, paddleHeight)
+
+            // Draw ball
+            context.fillRect(ballX, ballY, ballSize, ballSize)
+
+            // Draw scores
+            context.font = '20px Arial'
+            context.fillText(`${player1Score} : ${player2Score}`, canvas.width / 2 - 30, 30)
         }
 
-        /**
-         * Plays a sound effect for when the player wins the game.
-         */
-        function playWinSound() {
-            let oscillator = audioContext.createOscillator()
-            oscillator.type = 'square'
-            oscillator.frequency.value = 900 // Highest pitch for win
-            oscillator.connect(audioContext.destination)
-            oscillator.start()
-            setTimeout(() => { oscillator.stop() }, 200)
-        }
-
-        startButton.addEventListener('click', function () {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)()
-            startButton.disabled = true
+        // Game loop
+        function gameLoop() {
             update()
-        });
+            render()
+
+            if (player2Score >= winningScore) {
+                isGameStarted = false
+                alert('The AI Won')
+                resetGame()
+
+                document.getElementById('start').disabled = false
+            } else if (player1Score >= winningScore) {
+                isGameStarted = false
+                alert('You Won')
+                resetGame()
+
+                document.getElementById('start').disabled = false
+            }
+
+            if (isGameStarted) {
+                requestAnimationFrame(gameLoop)
+            }
+        }
+
+        // Reset the game
+        function resetGame() {
+            player1Score = 0
+            player2Score = 0
+            resetBall()
+        }
+
+        // Start the game
+        document.getElementById('start').addEventListener('click', function () {
+            document.getElementById('start').disabled = true
+            isGameStarted = true
+            gameLoop()
+        })
+
+        // Mouse movement event
+        canvas.addEventListener('mousemove', function (event) {
+            const rect = canvas.getBoundingClientRect()
+            let mouseY = event.clientY - rect.top - paddleHeight / 2
+
+            // Prevent paddle from moving below the canvas
+            if (mouseY < 0) {
+                mouseY = 0
+            } else if (mouseY + paddleHeight > canvas.height) {
+                mouseY = canvas.height - paddleHeight
+            }
+
+            player1Y = mouseY
+        })
+
+        // Function to handle when player hits the ball
+        function playerHitBall() {
+            const currentDate = new Date().toLocaleTimeString()
+            console.log(`${currentDate} : Player hit the ball`)
+
+            // Decide if ai will miss the ball
+
+            willAIMissBall = Math.random() < 0.35
+            console.info(`Will AI miss the ball: ${willAIMissBall}`)
+
+            if (willAIMissBall) {
+                let canvas = document.getElementById('canvas')
+                canvas.style.boxShadow = '0px 0px 100px 0px red'
+
+                console.log('Visual effects for miss activated')
+            } else {
+                document.getElementById('canvas').style.boxShadow = '0px 0px 100px 0px #2c2b2b'
+                console.log('NO visual effects for miss activated')
+            }
+        }
+
+        // Function to handle when AI hits the ball
+        function AIHitBall() {
+            const currentDate = new Date().toLocaleTimeString()
+            console.log(`${currentDate} : AI hit the ball`)
+
+            document.getElementById('canvas').style.boxShadow = '0px 0px 100px 0px #2c2b2b'
+        }
     </script>
 </body>
 

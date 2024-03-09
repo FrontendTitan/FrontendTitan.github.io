@@ -1,0 +1,490 @@
+<!--
+    This game by far has the ugliest code, beware
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Google Dino Game</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none !important;
+            outline: none;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 50%;
+        }
+
+        @font-face {
+            font-family: 'PressStart2P-Regular';
+            src: url('./assets/font/PressStart2P-Regular.ttf') format('truetype');
+        }
+    </style>
+</head>
+
+<body>
+    <canvas width="1600" height="900"></canvas>
+
+    <div id="gameOverScreen"
+        style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%;">
+        <p id="gameOverText"></p><br>
+        <img src="assets/ui/Reset.png" id="restartButton" alt=" restart button missing, click here on text to restart">
+    </div>
+
+    <!-- This script will contain the code for the start button -->
+    <script>
+        const startButton = document.createElement('button')
+        startButton.innerText = 'Start Game'
+        startButton.style.position = 'absolute'
+        startButton.style.top = '50%'
+        startButton.style.left = '50%'
+        startButton.style.transform = 'translate(-50%, -50%)'
+        startButton.style.padding = '10px 20px'
+        startButton.style.fontSize = '1.5rem'
+        startButton.style.fontFamily = 'PressStart2P-Regular'
+        startButton.style.cursor = 'pointer'
+        startButton.style.border = 'none'
+        startButton.style.color = 'black'
+        startButton.style.borderRadius = '5px'
+        startButton.style.zIndex = '100'
+
+        document.body.appendChild(startButton)
+    </script>
+
+    <!-- This script contains the loading of assets and methods 
+        For this game, I decided to try out an Object-Oriened
+        approach, because it makes me feel like a better programmer
+        and having the keywords green because of my vscode theme
+        just makes me feel like the best. -->
+    <script>
+        const canvas = document.querySelector('canvas')
+        const ctx = canvas.getContext('2d')
+
+        canvas.width = window.innerWidth
+        canvas.height = window.innerHeight
+
+        // Dino
+        const DinoImages = {
+            Spawn: new Image(), // Spawn Dino Image
+            Run1: new Image(),  // Position 1 of Dino Running
+            Run2: new Image(),  // Position 2 of Dino Running
+            Jump: new Image(),  // Dino Jumping Image
+            Dead: new Image(),  // Dino Dead Image
+            Duck1: new Image(), // Position 1 of Dino Ducking
+            Duck2: new Image()  // Position 2 of Dino Ducking
+        }
+
+        DinoImages.Spawn.src = './assets/dino/DinoStart.png'
+        DinoImages.Run1.src = './assets/dino/DinoRun1.png'
+        DinoImages.Run2.src = './assets/dino/DinoRun2.png'
+        DinoImages.Jump.src = './assets/dino/DinoJump.png'
+        DinoImages.Dead.src = './assets/dino/DinoDead.png'
+        DinoImages.Duck1.src = './assets/dino/DinoDuck1.png'
+        DinoImages.Duck2.src = './assets/dino/DinoDuck2.png'
+
+        // Cactus
+        const CactusImages = {
+            Large1: new Image(), // Large Cactus in group of 1
+            Large2: new Image(), // Large Cactus in group of 2
+            Large3: new Image(), // Large Cactus in group of 3
+            Small1: new Image(), // Small Cactus in group of 1
+            Small2: new Image(), // Small Cactus in group of 2
+            Small3: new Image()  // Small Cactus in group of 3
+        }
+
+        CactusImages.Large1.src = './assets/cactus/LargeCactus1.png'
+        CactusImages.Large2.src = './assets/cactus/LargeCactus2.png'
+        CactusImages.Large3.src = './assets/cactus/LargeCactus3.png'
+        CactusImages.Small1.src = './assets/cactus/SmallCactus1.png'
+        CactusImages.Small2.src = './assets/cactus/SmallCactus2.png'
+        CactusImages.Small3.src = './assets/cactus/SmallCactus3.png'
+
+        // Environment
+        const EnvImagesPath = {
+            Cloud: './assets/env/Cloud.png',            // Cloud Image
+            Track: './assets/env/Track.png'             // Ground Image
+        }
+
+        const UIImagesPath = {
+            GameOver: './assets/ui/GameOver.png',       // Game Over Image
+            Restart: './assets/ui/Reset.png'            // Restart Game Image
+        }
+
+        const SoundsPath = {
+            // Coming Later
+        }
+
+        class Dino {
+            constructor() {
+                this.x = 50
+                this.y = canvas.height - 15
+                this.width = 50
+                this.height = 100
+                this.speed = 5
+                this.jumpValue = 16
+                this.gravity = 0.7
+                this.velocity = 0
+                this.groundLevel = canvas.height + 5
+                this.image = DinoImages.Spawn
+                this.initlialClick = false
+                this.isJumping = false
+            }
+
+            draw() {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+            }
+
+            jump() {
+                if (this.y + this.height >= this.groundLevel) {
+                    this.image = DinoImages.Jump
+
+                    this.velocity = -this.jumpValue
+                    this.isJumping = true
+                    setTimeout(() => {
+                        this.isJumping = false
+                        dino.image = DinoImages.Run1
+                    }, 700)
+                }
+            }
+
+            update() {
+                this.velocity += this.gravity
+                this.y += this.velocity
+                if (this.y + this.height > this.groundLevel) {
+                    this.y = this.groundLevel - this.height
+                    this.velocity = 0
+                }
+            }
+        }
+
+        class Ground {
+            constructor() {
+                this.x = 0
+                this.y = canvas.height - 15
+                this.width = canvas.width
+                this.height = 15
+                this.image = new Image()
+                this.image.src = EnvImagesPath.Track
+            }
+
+            draw() {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+            }
+
+            move() {
+                this.x -= dino.speed
+                if (this.x + this.width <= 0)
+                    this.x = canvas.width - this.width
+
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+                ctx.drawImage(this.image, this.x + this.width, this.y, this.width, this.height)
+            }
+        }
+
+        class Cactus {
+            constructor() {
+                this.x = canvas.width
+                this.y = canvas.height - 100
+                this.width = 48
+                this.height = 95
+                this.hitboxWidth = 0
+                this.hitboxHeight = 80
+                this.speed = dino.speed / 1.6
+                this.image = [CactusImages.Large1, CactusImages.Large2, CactusImages.Large3, CactusImages.Small1, CactusImages.Small2, CactusImages.Small3][Math.floor(Math.random() * 6)]
+            }
+
+            draw() {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height)
+            }
+
+            move() {
+                this.x -= this.speed
+            }
+
+            checkCollision(dino) {
+                const dinoLeft = dino.x
+                const dinoRight = dino.x + dino.width
+                const dinoTop = dino.y
+                const dinoBottom = dino.y + dino.height
+
+                const cactusLeft = this.x
+                const cactusRight = this.x + this.width
+                const cactusTop = this.y
+                const cactusBottom = this.y + this.height
+
+                const hitboxLeft = cactusLeft + (this.width - this.hitboxWidth) / 2
+                const hitboxRight = cactusRight - (this.width - this.hitboxWidth) / 2
+                const hitboxTop = cactusTop + (this.height - this.hitboxHeight)
+                const hitboxBottom = cactusBottom
+
+                if (
+                    dinoLeft < hitboxRight &&
+                    dinoRight > hitboxLeft &&
+                    dinoTop < hitboxBottom &&
+                    dinoBottom > hitboxTop
+                ) {
+                    lose()
+                }
+            }
+        }
+
+        class Cloud {
+            constructor() {
+                this.x = canvas.width
+                this.width = 84
+                this.height = 101
+                this.speed = dino.speed / 4
+                this.image = new Image()
+                this.image.src = EnvImagesPath.Cloud
+            }
+
+            draw() {
+                ctx.drawImage(this.image, this.x, 150, this.width, this.height)
+                ctx.drawImage(this.image, this.x + this.width + 50, 200, this.width, this.height)
+            }
+
+            move() {
+                this.x -= this.speed
+            }
+        }
+
+        class Game {
+            constructor() {
+                this.score = 0
+                this.gameOver = false
+                this.gameStarted
+            }
+
+            updateScore() {
+                this.score++
+                const formattedScore = Math.floor(this.score / 19).toString().padStart(5, '0')
+
+                let highscore = localStorage.getItem('highscore')
+                if (Math.floor(this.score / 19) > highscore) {
+                    highscore = Math.floor(this.score / 19)
+                    localStorage.setItem('highscore', highscore)
+                }
+                const formattedHighscore = highscore.toString().padStart(5, '0')
+
+                ctx.font = '24px PressStart2P-Regular'
+                ctx.fillStyle = 'black'
+                ctx.fillText(`HI ${formattedHighscore} ${formattedScore}`, canvas.width - 360, 60)
+            }
+        }
+    </script>
+
+    <!-- This following script will contain calls to classes 
+        and methods and will also feature the game loop -->
+    <script>
+        let intervalSet = false
+        let gameLoopId
+
+        const dino = new Dino()
+        const ground = new Ground()
+        const game = new Game()
+
+        let cacti = []
+        let clouds = []
+
+        function animate(now) {
+            gameLoopId = requestAnimationFrame(animate)
+
+            const delta = now - then
+
+            if (delta > interval) {
+                then = now - (delta % interval)
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                dino.draw()
+                dino.update()
+
+                if (dino.initlialClick) {
+                    ground.draw()
+                    ground.move()
+                    game.updateScore()
+                }
+            }
+
+            for (let i = 0; i < cacti.length; i++) {
+                const cactus = cacti[i]
+                cactus.draw()
+                cactus.move()
+            }
+
+            cacti = cacti.filter(cactus => cactus.x + cactus.width > 0)
+
+            if (dino.initlialClick && !intervalSet) {
+                intervalSet = true
+
+                setInterval(() => {
+                    if (dino.isJumping) return null
+
+                    if (isRun1) {
+                        dino.image = DinoImages.Run2
+                        isRun1 = false
+                    } else {
+                        dino.image = DinoImages.Run1
+                        isRun1 = true
+                    }
+                }, 150)
+            }
+
+            if (game.gameStarted) {
+                game.updateScore(performance.now())
+            }
+
+            cacti.forEach(cactus => cactus.checkCollision(dino))
+
+
+            clouds.forEach((cloud, index) => {
+                cloud.draw()
+                cloud.move()
+
+                // Remove the cloud from the array if it's off the screen
+                if (cloud.x + cloud.width < 0) {
+                    clouds.splice(index, 1)
+                }
+            })
+        }
+
+        const fps = 90
+        let interval = 1000 / fps
+        let then = performance.now()
+        let isRun1 = true
+
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none'
+
+            game.updateScore(0)
+            game.gameStarted = true
+            game.score = 0
+
+            dino.initlialClick = true
+
+            document.addEventListener('click', () => dino.jump())
+            setInterval(spawnCactus, (Math.random() * 3.5) + 2000)
+            setInterval(spawnCloud, 3000)
+        })
+
+        function spawnCactus() {
+            const cactus = new Cactus()
+            cacti.push(cactus)
+        }
+
+        function spawnCloud() {
+            clouds.push(new Cloud())
+        }
+
+        animate(then)
+    </script>
+
+    <!-- This script block conains some misc. event listeners-->
+    <script>
+        window.addEventListener('resize', () => {
+            // Update the canvas size
+            canvas.width = window.innerWidth
+            canvas.height = window.innerHeight
+
+            // Update the ground level for the dino
+            dino.groundLevel = canvas.height - 15
+
+            // Update the ground's y position and width
+            ground.y = canvas.height - 15
+            ground.width = canvas.width
+
+            // Update cacti positions
+            cacti.forEach(cactus => {
+                cactus.y = canvas.height - 100
+            })
+
+            // Redraw everything
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            dino.draw()
+            ground.draw()
+        })
+
+        window.addEventListener('resize', () => {
+            if (window.innerHeight < 300) {
+                // Make a fullscreen modal that forces you to rezise the window
+                const modal = document.createElement('div')
+                modal.style.position = 'fixed'
+                modal.style.top = '0'
+                modal.style.left = '0'
+
+                modal.style.width = '100%'
+                modal.style.height = '100%'
+                modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'
+                modal.style.zIndex = '1000'
+
+                modal.innerHTML = `
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+                        <h1>Resize the window to play the game</h1>
+                    </div>
+                `
+                document.body.appendChild(modal)
+
+                window.addEventListener('resize', () => {
+                    if (window.innerHeight > 300) {
+                        modal.remove()
+                    }
+                })
+            }
+        })
+    </script>
+
+    <!-- In this code block, the lose function is defined -->
+    <script>
+        function lose() {
+            cancelAnimationFrame(gameLoopId)
+
+            document.removeEventListener('click', () => dino.jump())
+
+            game.gameOver = true
+            game.gameStarted = false
+
+            if (isPlayStation5()) {
+                alert('You lost! Your score was ' + Math.floor(game.score / 19) + '. Press OK to restart the game.')
+                location.reload()
+            }
+
+            const gameOverScreen = document.getElementById('gameOverScreen')
+            const gameOverText = document.getElementById('gameOverText')
+            const restartButton = document.getElementById('restartButton')
+
+            gameOverScreen.style.display = 'block'
+            gameOverText.innerText = 'Game Over'
+            gameOverText.style.fontFamily = 'PressStart2P-Regular'
+            gameOverText.style.fontSize = '3rem'
+
+            restartButton.addEventListener('click', () => {
+                location.reload()
+            })
+        }
+
+        function isPlayStation5() {
+            if (navigator.vendor === "Sony Interactive Entertainment Inc." &&
+                navigator.platform === "PlayStation 5") {
+                console.log('PlayStation 5 detected!')
+                return true
+            }
+
+            else {
+                return false
+            }
+        }
+    </script>
+</body>
+
+</html>

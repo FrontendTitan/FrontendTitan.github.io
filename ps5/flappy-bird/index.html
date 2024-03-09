@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Flappy Bird</title>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            user-select: none;
+            font-family: sans-serif;
+        }
+
+        body {
+            background-color: #5ee370;
+            background-image: url('assets/background/background-day.png');
+            background-repeat: repeat-x;
+        }
+
+        canvas {
+            position: absolute;
+            width: 100vw;
+            height: calc(100vh - 100px);
+            background-color: transparent;
+            object-fit: cover;
+        }
+
+        .base {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: transparent;
+            background-image: url('assets/background/base.png');
+            background-repeat: repeat-x;
+            z-index: -1;
+        }
+
+        #start {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 10px 20px;
+            font-size: 20px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .fail-pc-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            font-size: 50px;
+            font-family: 'Arial';
+            display: none;
+            z-index: 100;
+            animation: fadein .5s;
+        }
+
+        @keyframes fadein {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        a:nth-of-type(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="assets/ui/gameover.png" alt="You Lost Logo" class="fail-pc-container">
+
+    <div class="base"></div>
+
+    <canvas id="canvas" width="1920" height="1080"></canvas>
+    <img id="start" src="assets/ui/message.png" />
+
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <!-- This script block conains the images for the Flappy Bird Game 
+		Conains textures from the pipes, bird, background. -->
+    <script>
+        /**
+         * Pipe Image for the top and bottom pipes.
+         */
+        const pipeImage = new Image()
+        pipeImage.src = 'assets/ui/pipe-green.png'
+
+        /**
+         * Bird Textures for different states of the bird (normal, going up, going down).
+         * Some Texures are unused because the PS5 browser not being able to load them fast enough, creating a glitch effect. 
+         */
+        const normalBird = new Image()
+        normalBird.src = 'assets/bird/yellowbird-midflap.png'     
+    </script>
+
+    <!-- This script block contains the objects for the Flappy Bird game.
+		It sets up the properties and behavior of the bird, as well as the pipes that the bird needs to avoid.
+		It also sets up the canvas and context for rendering the game elements.
+
+		`birdProperties` -> An object that contains everything related to the bird, the animations, physics, movement, etc.
+		`pipes`          -> An object that conains the placement and texture loading for the pipes -->
+    <script>
+        const canvas = document.getElementById('canvas')
+        const ctx = canvas.getContext('2d')
+
+        /**
+         * Represents the properties and behavior of the bird in the game.
+         */
+        const birdProperties = {
+            x: 700,                 // x-coordinate of the bird at spawn
+            y: canvas.height / 2,   // y-coordinate of the bird at spawn
+            width: 70,              // width of the bird
+            height: 50,             // height of the bird
+            gravity: 0.3,           // gravity value
+            velocity: 1,            // velocity of the bird (increased)
+            jump: -5,               // jump value
+            rotation: 0,            // rotation of the bird in degrees
+
+            /**
+             * Draws the bird on the canvas.
+             */
+            draw: function () {
+                ctx.save()
+                ctx.translate(this.x + this.width / 2, this.y + this.height / 2)
+                ctx.rotate(this.rotation)
+                ctx.drawImage(normalBird, -this.width / 2, -this.height / 2, this.width, this.height)
+                ctx.restore()
+            },
+
+            /**
+             * Updates the bird's position and velocity based on gravity.
+             */
+            update: function () {
+                this.velocity += this.gravity
+                this.y += this.velocity
+
+                if (this.y + this.height > canvas.height - 150) {
+                    this.y = canvas.height - this.height - 150
+                    this.velocity = 0
+                    lose()
+                }
+
+                // Prevent bird from going above the canvas
+                if (this.y < 130) {
+                    this.y = 130
+                    this.velocity = 0
+                }
+            },
+
+            /**
+             * Jumps the bird by changing its velocity.
+             */
+            flap: function () {
+                this.velocity = this.jump
+                this.rotation = -0.5
+
+                const smoothRotation = () => {
+                    if (this.rotation < 0) {
+                        this.rotation += 0.01
+                        requestAnimationFrame(smoothRotation)
+                    }
+                }
+
+                playAudio('assets/sounds/wing.wav')
+
+                requestAnimationFrame(smoothRotation)
+            },
+
+            checkCollision: function () {
+                for (let i = 0; i < pipes.position.length; i++) {
+                    const pipe = pipes.position[i]
+
+                    if (
+                        this.x + this.width > pipe.x &&
+                        this.x < pipe.x + pipes.width &&
+                        (this.y < pipe.y + pipes.height ||
+                            this.y + this.height > pipe.y + pipes.height + pipes.gap)
+                    ) {
+                        lose()
+                    }
+                }
+            },
+        }
+
+        const pipes = {
+            position: [],   // Array to store the position of the pipes
+            gap: 350,       // Gap between the top and bottom pipes
+            width: 100,     // Width of the pipes
+            height: 500,    // Height of the pipes
+            maxYPos: -150,  // Maximum Y position of the pipes
+            dx: 10,         // Speed of the pipes
+
+            /**
+             * Draws the pipes on the canvas.
+             */
+            draw: function () {
+                for (let i = 0; i < this.position.length; i++) {
+                    const pipe = this.position[i]
+                    const topYPos = pipe.y
+                    const bottomYPos = canvas.height - this.height // Set bottomYPos to the height of the canvas
+
+                    // Top pipe (turned upside down)
+                    ctx.save()
+                    ctx.translate(pipe.x + this.width / 2, topYPos + this.height / 2)
+                    ctx.rotate(Math.PI)
+                    ctx.drawImage(pipeImage, -this.width / 2, -this.height / 2, this.width, this.height)
+                    ctx.restore()
+
+                    // Bottom pipe
+                    ctx.drawImage(pipeImage, pipe.x, bottomYPos, this.width, this.height)
+                }
+            },
+
+            /**
+             * Updates the position of the pipes in the game.
+             */
+            update: function () {
+                if (frames % 100 === 0) {
+                    this.position.push({
+                        x: canvas.width,
+                        y: this.maxYPos * (Math.random() + 1)
+                    })
+                }
+
+                for (let i = 0; i < this.position.length; i++) {
+                    const pipe = this.position[i]
+                    pipe.x -= this.dx
+
+                    if (pipe.x + this.width <= 0) {
+                        this.position.shift()
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- This script block contains the game loop and the event listeners for the game.
+        `animate` -> The game loop that updates the game elements and renders them on the canvas.
+        `document.addEventListener` -> Event listener for the space key to make the bird flap.
+        `canvas.addEventListener` -> Event listener for the canvas to make the bird flap.
+        `document.getElementById('start').addEventListener` -> Event listener for the start button to start the game. -->
+    <script>
+        const frameRate = 120
+
+        let gameStarted = false
+        let lastTime = 0
+        let frames = 0
+
+        let score = 0
+
+        function animate(timestamp) {
+            if (!gameStarted) return false
+
+            const deltaTime = timestamp - lastTime
+            if (deltaTime > 1000 / frameRate) {
+                lastTime = timestamp
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+                pipes.draw()
+                birdProperties.draw()
+                birdProperties.update()
+                birdProperties.checkCollision()
+                pipes.update()
+
+                frames++
+            }
+
+            score = frames / 100
+
+            updateScore()
+            requestAnimationFrame(animate)
+        }
+
+        document.addEventListener('keydown', function (event) {
+            if (event.code === 'Space') {
+                birdProperties.flap()
+            }
+        })
+
+        canvas.addEventListener('click', function () {
+            birdProperties.flap()
+        })
+
+        document.getElementById('start').addEventListener('click', function () {
+            gameStarted = true
+            this.style.display = 'none'
+            animate()
+        })
+
+        document.querySelector('.base')
+
+        animate()
+    </script>
+
+    <!-- This script block contains the events that are triggered, that will update visual components.
+		  `Lose` -> Triggers the lose function which will display some stuff and will restart the game
+		
+		  The unique thing about these 'event functions' is that they always log something to the console 
+		  unless a function is in the scope of another function, and not the global scope.-->
+    <script>
+        let lost = false
+
+        function lose() {
+            lost = true
+            birdProperties.flap = undefined
+
+            playAudio('assets/sounds/hit.wav')
+            console.log('Game Over! Your score: ', score)
+            gameStarted = false
+
+            // document.body.style.backgroundImage = 'unset'
+            // document.body.style.backgroundColor = 'black'
+            document.querySelector('.fail-pc-container').style.display = 'block'
+            // document.querySelector('.base').style.display = 'none'
+
+            if (isPlayStation5()) {
+                alert('Game Over! Your score: ' + score)
+                location.reload()
+            } else {
+                setTimeout(() => {
+                    location.reload()
+                }, 3000)
+            }
+
+        }
+
+        function playAudio(path) {
+            const audio = new Audio()
+            audio.src = path
+            audio.play()
+        }
+
+        function isPlayStation5() {
+            if (navigator.vendor === "Sony Interactive Entertainment Inc." &&
+                navigator.platform === "PlayStation 5") {
+                console.log('PlayStation 5 detected!')
+                return true
+            }
+
+            else {
+                return false
+            }
+        }
+
+        function updateScore() {
+            if (score % 1 === 0 && score !== 0) {
+                setTimeout(() => {
+                    if (!lost) playAudio('assets/sounds/point.wav')
+                }, 500)
+            }
+
+            score = Math.floor(score)
+
+            if (document.getElementById('score')) {
+                document.getElementById('score').textContent = `Score: ${score}`
+                document.getElementById('best-score').textContent = `Best: ${getBestScore()}`
+            } else {
+                createScoreElement()
+            }
+
+            // Set the best score in localStorage
+            if (score > getBestScore()) {
+                setBestScore(score)
+            }
+
+            function createScoreElement() {
+                const element = document.createElement('div')
+                element.id = 'score'
+                element.style.position = 'absolute'
+                element.style.top = '10px'
+                element.style.left = '10px'
+
+                element.style.color = 'white'
+                element.style.fontSize = '24px'
+                element.textContent = 'Score: ' + score
+                document.body.appendChild(element)
+
+
+                const bestScoreElement = document.createElement('div')
+                bestScoreElement.id = 'best-score'
+                bestScoreElement.style.position = 'absolute'
+                bestScoreElement.style.top = '40px'
+                bestScoreElement.style.left = '10px'
+
+                bestScoreElement.style.color = 'white'
+                bestScoreElement.style.fontSize = '24px'
+                bestScoreElement.textContent = 'Best: ' + getBestScore()
+                document.body.appendChild(bestScoreElement)
+            }
+
+            console.log('Score updated: ', score)
+        }
+
+        function getBestScore() {
+            console.log('Best score: ', localStorage.getItem('bestScore'))
+            return localStorage.getItem('bestScore') || 0
+        }
+
+        function setBestScore(score) {
+            localStorage.setItem('bestScore', score)
+            console.log('New best score: ', score)
+        }
+    </script>
+</body>
+
+</html>

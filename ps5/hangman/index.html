@@ -10,14 +10,16 @@
         /* Add your CSS styles here */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
+            background-color: #252525;
             margin: 0;
             padding: 20px;
+            color-scheme: dark;
+            color: white;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            color: white;
         }
 
         #word-container {
@@ -44,6 +46,7 @@
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
+            background-color: #3b3b3b;
             border-radius: 4px;
             margin-right: 10px;
         }
@@ -98,7 +101,7 @@
             top: 10px;
             left: 10px;
             text-decoration: none;
-            color: #000;
+            color: white;
         }
 
         a:nth-child(2) {
@@ -119,9 +122,7 @@
     <a href="/">Back To Home</a>
     <a href="/ps5">Game Picker</a>
     <h1>Hangman Game</h1>
-    <div id="word-container">
-        <!-- Display the word with underscores -->
-    </div>
+    <div id="word-container"></div>
     <div id="guesses-container">
         <p>Guesses: <span id="guesses"></span></p>
     </div>
@@ -129,39 +130,35 @@
         <input type="text" id="guess-input" placeholder="Enter a letter">
         <button id="guess-button">Guess</button>
     </div>
-    <div id="result-container">
-        <!-- Display the game result -->
-    </div>
-    <div id="hangman-container">
-        <!-- Display the hangman image -->
-    </div>
+    <div id="result-container"></div>
+    <div id="hangman-container"></div>
     <div class="keyboard-container">
-        <button class="keyboard-button">Q</button>
-        <button class="keyboard-button">W</button>
-        <button class="keyboard-button">E</button>
-        <button class="keyboard-button">R</button>
-        <button class="keyboard-button">T</button>
-        <button class="keyboard-button">Y</button>
-        <button class="keyboard-button">U</button>
-        <button class="keyboard-button">I</button>
-        <button class="keyboard-button">O</button>
-        <button class="keyboard-button">P</button><br>
-        <button class="keyboard-button">A</button>
-        <button class="keyboard-button">S</button>
-        <button class="keyboard-button">D</button>
-        <button class="keyboard-button">F</button>
-        <button class="keyboard-button">G</button>
-        <button class="keyboard-button">H</button>
-        <button class="keyboard-button">J</button>
-        <button class="keyboard-button">K</button>
-        <button class="keyboard-button">L</button><br>
-        <button class="keyboard-button">Z</button>
-        <button class="keyboard-button">X</button>
-        <button class="keyboard-button">C</button>
-        <button class="keyboard-button">V</button>
-        <button class="keyboard-button">B</button>
-        <button class="keyboard-button">N</button>
-        <button class="keyboard-button">M</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('Q')">Q</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('W')">W</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('E')">E</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('R')">R</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('T')">T</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('Y')">Y</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('U')">U</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('I')">I</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('O')">O</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('P')">P</button><br>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('A')">A</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('S')">S</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('D')">D</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('F')">F</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('G')">G</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('H')">H</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('J')">J</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('K')">K</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('L')">L</button><br>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('Z')">Z</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('X')">X</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('C')">C</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('V')">V</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('B')">B</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('N')">N</button>
+        <button class="keyboard-button" onclick="handleKeyboardButtonClick('M')">M</button>
     </div>
 
     <script>
@@ -178,15 +175,19 @@
         let word = ""
         let guessedLetters = []
         let remainingGuesses = 6
+        let gameEnded = false
 
         function startGame() {
             word = getRandomWord()
             guessedLetters = []
             remainingGuesses = 6
+            // Add the first letter of the word to the guessedLetters array
+            guessedLetters.push(word[0])
             updateWordDisplay()
             updateGuessesDisplay()
             updateResultDisplay("")
             updateHangmanDisplay()
+            gameEnded = false
         }
 
         function getRandomWord() {
@@ -198,7 +199,7 @@
             wordContainer.innerHTML = ""
             for (let i = 0; i < word.length; i++) {
                 const letter = word[i]
-                if (guessedLetters.includes(letter)) {
+                if (guessedLetters.includes(letter) || i === 0) {
                     wordContainer.innerHTML += letter
                 } else {
                     wordContainer.innerHTML += "_"
@@ -220,67 +221,71 @@
             const hangmanContainer = document.getElementById("hangman-container")
             const hangmanImages = [
                 `
-  +---+
-  |   |
-      |
-      |
-      |
-      |
-=========`,
+    +---+
+    |   |
+        |
+        |
+        |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
-      |
-      |
-      |
-=========`,
+    +---+
+    |   |
+    O   |
+        |
+        |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
-  |   |
-      |
-      |
-=========`,
+    +---+
+    |   |
+    O   |
+    |   |
+        |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
- /|   |
-      |
-      |
-=========`,
+    +---+
+    |   |
+    O   |
+    /|   |
+        |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
- /|\\  |
-      |
-      |
-=========`,
+    +---+
+    |   |
+    O   |
+    /|\\  |
+        |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
- /|\\  |
- /    |
-      |
-=========`,
+    +---+
+    |   |
+    O   |
+    /|\\  |
+    /    |
+        |
+    =========`,
                 `
-  +---+
-  |   |
-  O   |
- /|\\  |
- / \\  |
-      |
-=========`
+    +---+
+    |   |
+    O   |
+    /|\\  |
+    / \\  |
+        |
+    =========`
             ]
             const hangmanImageIndex = 6 - remainingGuesses
             hangmanContainer.innerHTML = `<pre>${hangmanImages[hangmanImageIndex]}</pre>`
         }
 
         function handleGuess() {
+            if (gameEnded) {
+                return
+            }
+
             const guessInput = document.getElementById("guess-input")
             const guess = guessInput.value.toLowerCase()
             guessInput.value = ""
@@ -305,22 +310,25 @@
 
             if (word.includes(guess)) {
                 updateWordDisplay()
-                if (!word.split("").some(letter => !guessedLetters.includes(letter))) {
-                    setTimeout(() => {
-                        alert("Congratulations! You won!")
-                        location.reload()
-                    }, 100)
-                }
             } else {
                 remainingGuesses--
                 updateGuessesDisplay()
                 updateHangmanDisplay()
-                if (remainingGuesses === 0) {
-                    setTimeout(() => {
-                        alert("You lost!")
-                        location.reload()
-                    }, 100)
-                }
+            }
+
+            // Check for win or loss after each guess
+            if (!word.split("").some(letter => !guessedLetters.includes(letter))) {
+                gameEnded = true
+                setTimeout(() => {
+                    alert("Congratulations! You won!")
+                    location.reload()
+                }, 100)
+            } else if (remainingGuesses === 0) {
+                gameEnded = true
+                setTimeout(() => {
+                    alert("You lost!")
+                    location.reload()
+                }, 100)
             }
         }
 
@@ -331,6 +339,29 @@
                 handleGuess()
             }
         })
+
+        /**
+         * Handles the click event of a keyboard button.
+         * @param {string} guess - The guessed letter.
+         */
+        function handleKeyboardButtonClick(guess) {
+            if (gameEnded) {
+                return
+            }
+
+            const guessInput = document.getElementById("guess-input")
+            guessInput.value = guess
+            handleGuess()
+
+            // Check for win or loss after each guess
+            const wordLetters = word.split("")
+            const allLettersGuessed = wordLetters.every(letter => guessedLetters.includes(letter))
+
+            // Log debugging information
+            console.log("Guessed letters: ", guessedLetters)
+            console.log("Word letters: ", wordLetters)
+            console.log("All letters guessed: ", allLettersGuessed)
+        }
 
         // Start the game
         startGame();

@@ -1,0 +1,129 @@
+|===================================================================|
+|   Main Games for the video: (41 games):
+|          
+| * Hangman           + Variants                
+| * Minesweeper       + Variants                
+| * Pong              + Variants                
+| * Space Invaders    + Variants                
+| * Tetris            + Variants                
+| * Flappy Bird       + Variants                
+| * Google Dino Game  + Variants                
+| * Chess             + Variants                
+| * Snake             + Variants      
+|          
+|                                               
+| Games to Create:                                 
+| 
+| 1. Hangman: (4 games)
+|     - Hangman ✅
+|     - Hangman With Timer 
+|     - Hangman With Hard Long Words
+|     - Hangman With Multiple Players
+| 
+| 2. Minesweeper: (11 games)
+|     - Minesweeper 10x10 ✅
+|     - Minesweeper 20x20
+|     - Minesweeper 30x30
+|     - Minesweeper 40x40
+|     - Minesweeper 50x50
+|     - Minesweeper 60x60
+|     - Minesweeper 70x70
+|     - Minesweeper 80x80
+|     - Minesweeper 90x90
+|     - Minesweeper 100x100
+|     - Minesweeper 200x200
+|     
+| 3. Pong: (6 games)
+|     - Pong ✅
+|     - Pong With Obstacles
+|     - Pong With Small Paddles
+|     - Pong WIth Large Paddles
+|     - Pong with Unbeatable AI
+|     - Pong with Unbeatable AI + Small Paddles
+| 
+| 4. Space Invaders: (2 games)
+|     - Space Invaders ✅ (return to add sound effects)
+|     - Space Invaders With Fast Enemies
+| 
+| 5. Tetris: (3 games)
+|     - Tetris ✅ (return to add sound effects)
+|     - Tetris Fast Peices
+|     - Tetris Slow Motion
+| 
+| 6. Flappy Bird: (6 games)
+|     - Flappy Bird ✅
+|     - Flappy Bird Fast Motion
+|     - Flappy Bird Slow Motion
+|     - Flappy Bird Nightly
+|     - Flappy Bird Nightly Fast Motion
+|     - Flappy Bird Nightly Slow Motion
+| 
+| 7. Google Dino Game: (4 games)
+|     - Google Dino Game ✅
+|     - Google Dino Game With Powerups
+|     - Google Dino Game Dark Mode 
+|     - Google Dino Game With Powerups 
+| 
+| 8. Chess: (11 games)
+|     - Chess 
+|     - Chess960
+|     - Chess (With 10 min Timer)
+|     - Chess (With 5 min Timer)
+|     - Chess (With 3 min Timer)
+|     - Chess (With 1 min Timer)
+|     - 57. Chess Multiplayer
+|     - 58. Chess Multiplayer
+|     - 59. Chess Multiplayer
+|     - 60. Chess Multiplayer
+|     - 61. Chess Multiplayer
+| 
+| 9. Blackjack (1 game)
+|     - Blackjack ✅
+| 
+| 10. Snake: (1 games)
+|     - Snake ✅
+| 
+|
+|===================================================================|
+|   The rest of the 40 games:
+|
+| 1. Guess the Number ✅
+| 2. Reverse Guess the Number
+| 3. Rock Paper Scissors ✅
+| 4. Rock Paper Scissors (With AI Opponent)
+| 5. Memory Matching Game ✅
+| 6. Memory Matching Game (Different Themes)
+| 7. Whack-a-Mole
+| 8. Connect Four
+| 9. Sudoku
+|10. Tic-Tac-Toe ✅
+|11. Tic-Tac-Toe 4x4
+|12. Tic-Tac-Toe 5x5
+|13. Tic-Tac-Toe (With AI Opponent)
+|14. Dice Roll
+|15. Coin Flip
+|16. Countdown Timer Challenge
+|17. Countdown Timer Challenge 2min
+|18. Countdown Timer Challenge 5min
+|19. Countdown Timer Challenge 10min
+|20. Color Matching Game
+|21. Simple Reaction Time Test
+|22. Dice roll with GBP 1 Pound 
+|23. Dice roll with GBP 2 Pound
+|24. Dice roll with GBP 50p
+|25. Dice roll with GBP 10p
+|26. Dice roll with GBP 5p
+|27. Dice roll with GBP 1p
+|28. Dice roll with USD 1$
+|29. Dice roll with USD 50c
+|30. Dice roll with USD 25c
+|31. Dice roll with USD 10c
+|32. Dice roll with USD 5c
+|33. Dice roll with USD 1c
+|34. Dice roll with RON 1 ban
+|35. Dice roll with RON 5 bani
+|36. Dice roll with RON 10 bani
+|37. Dice roll with RON 50 bani
+|38. Dice roll with FrontendTitan Profile Picture
+|39. Simple Math Game
+|40. Complex Math Game
