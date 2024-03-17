@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    user-select: none;
+    background-color: rgb(48, 46, 43);
+}
+
+.chess-board {
+    border-spacing: 0;
+    border-collapse: collapse;
+    transition: all 0.5s linear;
+    background-color: rgb(211, 174, 137);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.chess-board th {
+    padding: .5em;
+}
+
+.chess-board th+th {
+    border-bottom: 1px solid #000;
+}
+
+.chess-board th:first-child,
+.chess-board td:last-child {
+    border-right: 1px solid #000;
+}
+
+.chess-board tr:last-child td {
+    border-bottom: 1px solid;
+}
+
+.chess-board th:empty {
+    border: none;
+}
+
+.chess-board td {
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    font-size: 32px;
+    line-height: 0;
+}
+
+.chess-board .light {
+    background: rgb(237, 214, 176);
+    color: rgb(184, 135, 98);
+}
+
+.chess-board .dark {
+    background: rgb(184, 135, 98);
+    color: rgb(237, 214, 176);
+}
+
+.piece {
+    width: 38px;
+    height: 38px;
+    transform: translate(1px, 2px);
+}
+
+.selected {
+    background-color: rgb(211, 174, 137) !important;
+    animation: pulse 1s infinite;
+}
+
+.coordinate-letter {
+    position: absolute;
+    font-size: 10px;
+    font-weight: bold;
+    bottom: -4px;
+    right: 2px;
+}
+
+td {
+    position: relative;
+}
+
+.coordinate-number {
+    position: absolute;
+    font-size: 10px;
+    top: 0;
+    left: 2px;
+    font-weight: bold;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
