@@ -20,18 +20,38 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
             margin: 0;
         }
 
         .cell {
-            width: 30px;
-            height: 30px;
+            width: 30px !important;
+            height: 30px !important;
+            max-width: 30px !important;
+            max-height: 30px !important;
             border: 1px solid #000;
             display: inline-block;
+            box-sizing: border-box;
             text-align: center;
             vertical-align: middle;
             font-size: 20px;
             cursor: pointer;
+        }
+
+        #board {
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-bottom: 10px;
         }
 
         .mine {
@@ -44,10 +64,6 @@
 
         .marked {
             background-color: yellow;
-        }
-
-        #board {
-            width: 320px;
         }
 
         a {
@@ -76,13 +92,34 @@
     <a href="/">Back To Home</a>
     <a href="/ps5">Game Picker</a>
 
-    <h1>Minesweeper</h1>
+    <div>
+        <h1>Minesweeper</h1>
+        <button onclick='setMarkMode()'>Enter Mark Mode</button>
+    </div>
     <div id="board"></div>
 
     <script>
-        let boardSize = 10
-        const mineCount = 10
+        // Get the url parameters for boardSize and mineCount
+        const urlParams = new URLSearchParams(window.location.search)
+
+        let boardSize = urlParams.get('boardSize') || 10
+        const mineCount = urlParams.get('mineCount') || 10
         let board = []
+
+        var markMode = false
+        function setMarkMode() {
+            markMode = !markMode
+            document.querySelector('button').textContent = markMode ? 'Exit Mark Mode' : 'Enter Mark Mode'
+        }
+
+        // Set width and height of the board
+        let boardElementSize = 0
+        for (let i = 0; i < boardSize; i++) {
+            boardElementSize += Number(urlParams.get('cellSize')) || 30
+        }
+
+        document.getElementById('board').style.width = `${boardElementSize}px`
+        document.getElementById('board').style.height = `${boardElementSize}px`
 
         function createBoard() {
             for (let i = 0; i < boardSize; i++) {
@@ -210,8 +247,12 @@
                     cell.classList.add("cell")
                     cell.id = `cell-${i}-${j}`
                     cell.addEventListener("click", () => {
-                        revealCell(i, j)
-                        checkWin()
+                        if (markMode) {
+                            markCell(i, j)
+                        } else {
+                            revealCell(i, j)
+                            checkWin()
+                        }
                     })
                     cell.addEventListener("contextmenu", (event) => {
                         event.preventDefault()
@@ -230,7 +271,42 @@
             renderBoard()
         }
 
-        startGame();
+        startGame()
+
+        // Easter egg
+        const game = {
+            board: {
+                reveal: () => console.log(board)
+            }
+        }
+
+        if (urlParams.get('cellSize')) {
+            let cellSize = Number(urlParams.get('cellSize'))
+            let stylesheet = document.styleSheets[0]
+
+            let cellRule
+            for (let rule of stylesheet.cssRules) {
+                if (rule.selectorText === '.cell') {
+                    cellRule = rule
+                    break
+                }
+            }
+
+            if (cellRule) {
+                cellRule.style.setProperty('width', `${cellSize}px`, 'important')
+                cellRule.style.setProperty('height', `${cellSize}px`, 'important')
+                cellRule.style.setProperty('max-width', `${cellSize}px`, 'important')
+                cellRule.style.setProperty('max-height', `${cellSize}px`, 'important')
+            }
+        }
+
+
+        // console.log(urlParams.get('cellSize'))
+        // console.log(mineCount)
+        // console.log(boardSize)
+
+        console.log(`Bro I know you are trying to somehow inspect element the website or console.log the board.`)
+        console.log(`I will save you the trouble, write below "game.board.reveal()" without quotation marks.`)
     </script>
 </body>
 

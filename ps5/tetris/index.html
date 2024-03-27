@@ -268,12 +268,18 @@
         let dropCounter = 0                                     // Counter for dropping the tetromino
         let dropInterval = 1000                                 // Interval for dropping the tetromino
         const scale = 20                                        // Scale factor for rendering
+        let fallSpeed = 1000                                    // The speed at which the tetromino falls
 
         const scoreDisplay = document.getElementById('score')
         scoreDisplay.textContent = `Score: ${score}`            // Display the current score
 
         const levelDisplay = document.getElementById('level')
         levelDisplay.textContent = `Level: ${level}`            // Display the current level
+
+        const urlParams = new URLSearchParams(window.location.search)
+
+        if (urlParams.has('speed'))
+            fallSpeed = Number(urlParams.get('speed'))
 
         /**
          * Generates a random tetromino object.
@@ -430,19 +436,19 @@
             outer: for (let y = rows - 1; y > 0; --y) {
                 for (let x = 0; x < cols; ++x) {
                     if (gameBoard[y][x] === 0) {
-                        continue outer                          // Skip to the next row if any cell is empty
+                        continue outer                              // Skip to the next row if any cell is empty
                     }
                 }
 
-                const row = gameBoard.splice(y, 1)[0].fill(0)   // Remove the completed row and fill it with zeros
-                gameBoard.unshift(row)                          // Add the completed row back to the top
-                score += 10                                     // Increase the score by 10
-                scoreDisplay.textContent = `Score: ${score}`    // Update the score display
+                const row = gameBoard.splice(y, 1)[0].fill(0)       // Remove the completed row and fill it with zeros
+                gameBoard.unshift(row)                              // Add the completed row back to the top
+                score += 10                                         // Increase the score by 10
+                scoreDisplay.textContent = `Score: ${score}`        // Update the score display
 
                 // Increase level and decrease dropInterval
-                level = Math.floor(score / 100) + 1             // Calculate the new level based on the score
-                levelDisplay.textContent = `Level: ${level}`    // Update the level display
-                dropInterval = 1000 - (level * 50)             // Adjust the drop interval based on the level
+                level = Math.floor(score / 100) + 1                 // Calculate the new level based on the score
+                levelDisplay.textContent = `Level: ${level}`        // Update the level display
+                dropInterval = fallSpeed - (level * 50)             // Adjust the drop interval based on the level
             }
         }
 
@@ -522,7 +528,7 @@
 
             startButton.remove()
 
-            dropInterval = 1000 - (level * 50)
+            dropInterval = fallSpeed - (level * 50)
             document.getElementById('pauseButton').innerText = 'Pause'
 
             /**
@@ -605,7 +611,7 @@
                 }
 
                 // Set the fall speed of the tetrimino to default
-                dropInterval = 1000 - (level * 50)
+                dropInterval = fallSpeed - (level * 50)
             })
 
             /**
@@ -620,7 +626,7 @@
                 }
 
                 // Set the fall speed of the tetrimino to default
-                dropInterval = 1000 - (level * 50)
+                dropInterval = fallSpeed - (level * 50)
             })
 
             /**
@@ -631,7 +637,7 @@
                 playerRotate(1)
 
                 // Set the fall speed of the tetrimino to default
-                dropInterval = 1000 - (level * 50)
+                dropInterval = fallSpeed - (level * 50)
             })
 
             /**
@@ -656,11 +662,11 @@
                 }
 
                 // Set the fall speed of the tetromino to faster
-                dropInterval = 100
+                dropInterval = fallSpeed - (level * 50)
 
                 // Reset the fall speed to slower after 100ms
                 setTimeout(() => {
-                    dropInterval = 1000 - (level * 50)
+                    dropInterval = fallSpeed - (level * 50)
                 }, 100)
             })
 
@@ -672,7 +678,7 @@
                     document.getElementById('pauseButton').textContent = 'Resume'
                     document.querySelector('canvas').style.boxShadow = "0 0 100px 0 rgb(255, 255, 255)"
                 } else {
-                    dropInterval = 1000 - (level * 50)
+                    dropInterval = fallSpeed - (level * 50)
                     document.getElementById('pauseButton').textContent = 'Pause'
                     document.querySelector('canvas').style.boxShadow = "0 0 1000px 50px rgb(255, 255, 255)"
                 }

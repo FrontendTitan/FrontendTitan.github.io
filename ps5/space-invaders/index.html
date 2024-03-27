@@ -158,6 +158,9 @@
         let moveRightInterval   // Global variable for move right interval
         let shootInterval       // Global variable for shoot interval
 
+        if (new URLSearchParams(window.location.search).get('increasdedAISpeed'))
+            enemySpeed = 5
+
         /**
          * Draws the player on the canvas.
          */

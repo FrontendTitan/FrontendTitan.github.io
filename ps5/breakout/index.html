@@ -1,0 +1,181 @@
+<!-- Original Project by: https://github.com/aliHaider-911 
+     Modified extensively by FrontendTitan.com -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<body />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>Breakout - FrontendTitan</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        #gameCanvas {
+            border: 1px solid black;
+            width: 900px;
+            height: calc(100vh - 20px);
+            border-radius: 10px 10px 0 0;
+        }
+    </style>
+</head>
+
+<canvas id="gameCanvas" width="900" height="1600"></canvas>
+<script>
+    var canvas = document.getElementById("gameCanvas")
+    var ctx = canvas.getContext("2d")
+
+    // make canvas width and height same as the window but maintain a 9:16 aspect ratio
+    canvas.width = window.innerWidth
+    canvas.height = window.innerWidth * 16 / 9
+
+    canvas.setAttribute('width', window.innerWidth)
+    canvas.setAttribute('height', window.innerWidth * 16 / 9)
+
+    window.addEventListener('resize', function () {
+        canvas.width = window.innerWidth
+        canvas.height = window.innerWidth * 16 / 9
+        canvas.setAttribute('width', window.innerWidth)
+        canvas.setAttribute('height', window.innerWidth * 16 / 9)
+    })
+
+    var ballRadius = 10
+    var x = canvas.width / 2
+    var y = canvas.height - 30
+    var dx = 2
+    var dy = -2
+    var paddleHeight = 10
+    var paddleWidth = 75
+    var paddleX = (canvas.width - paddleWidth) / 2
+
+    var brickColumnCount = 10
+    var brickRowCount = 6
+    var brickWidth = 75
+    var brickHeight = 20
+    var brickPadding = 10
+    var brickOffsetTop = 30
+    var brickOffsetLeft = 30
+
+    var bricks = []
+    for (var c = 0; c < brickColumnCount; c++) {
+        bricks[c] = []
+        for (var r = 0; r < brickRowCount; r++) {
+            bricks[c][r] = { x: 0, y: 0, status: 1, color: getRandomColor() }
+        }
+    }
+
+    function drawBall() {
+        ctx.beginPath()
+        ctx.arc(x, y, ballRadius, 0, Math.PI * 2)
+        ctx.fillStyle = "#0095DD"
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    /**
+     * Make the player follow the cursor.
+     */
+    canvas.addEventListener('mousemove', function (e) {
+        var rect = canvas.getBoundingClientRect()
+        var mouseX = e.clientX - rect.left
+
+        if (mouseX - paddleWidth / 2 >= 0 && mouseX + paddleWidth / 2 <= canvas.width) {
+            paddleX = mouseX - paddleWidth / 2
+        }
+    })
+
+    function drawPaddle() {
+        ctx.beginPath()
+        ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight)
+        ctx.fillStyle = "#0095DD"
+        ctx.fill()
+        ctx.closePath()
+    }
+
+    function drawBricks() {
+        for (var c = 0; c < brickColumnCount; c++) {
+            for (var r = 0; r < brickRowCount; r++) {
+                if (bricks[c][r].status == 1) {
+                    var brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft
+                    var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop
+                    bricks[c][r].x = brickX
+                    bricks[c][r].y = brickY
+                    ctx.beginPath()
+                    ctx.rect(brickX, brickY, brickWidth, brickHeight)
+                    ctx.fillStyle = bricks[c][r].color
+                    ctx.fill()
+                    ctx.closePath()
+                }
+            }
+        }
+    }
+
+    function collisionDetection() {
+        for (var c = 0; c < brickColumnCount; c++) {
+            for (var r = 0; r < brickRowCount; r++) {
+                var b = bricks[c][r]
+                if (b.status == 1) {
+                    if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+                        dy = -dy
+                        b.status = 0
+                    }
+                }
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        drawBricks()
+        drawBall()
+        drawPaddle()
+        collisionDetection()
+
+        if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+            dx = -dx
+        }
+        if (y + dy < ballRadius) {
+            dy = -dy
+        } else if (y + dy > canvas.height - ballRadius) {
+            if (x > paddleX && x < paddleX + paddleWidth) {
+                dy = -dy
+            } else {
+            }
+        }
+
+        x += dx
+        y += dy
+    }
+
+    var interval
+
+    if (window.location.search.includes('restart=true'))
+        interval = setInterval(draw, 10)
+    else
+        setTimeout(() => interval = setInterval(draw, 10), 2000)
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'
+        var color = '#'
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)]
+        }
+        return color
+    }
+</script>
+<!-- alert("Game Over, Click Ok to Restart the Game . . .")
+location.href = '/ps5/breakout/?restart=true'
+clearInterval(interval) -->
+
+</html>

@@ -162,8 +162,11 @@
             height: 50,             // height of the bird
             gravity: 0.3,           // gravity value
             velocity: 1,            // velocity of the bird (increased)
-            jump: -5,               // jump value
             rotation: 0,            // rotation of the bird in degrees
+
+            // jump value
+            jump: new URLSearchParams(window.location.search).get('lowGravity') ? -8.5 :
+                new URLSearchParams(window.location.search).get('strongGravity') ? -3 : -5,
 
             /**
              * Draws the bird on the canvas.
@@ -211,7 +214,6 @@
                 }
 
                 playAudio('assets/sounds/wing.wav')
-
                 requestAnimationFrame(smoothRotation)
             },
 
@@ -449,6 +451,16 @@
         function setBestScore(score) {
             localStorage.setItem('bestScore', score)
             console.log('New best score: ', score)
+        }
+
+        // Grab stylesheet
+        const style = document.styleSheets[0]
+
+        // Find the rule that contains the background image for body
+        for (let i = 0; i < style.cssRules.length; i++) {
+            if (style.cssRules[i].selectorText === 'body' && new URLSearchParams(window.location.search).get('nightly')) {
+                style.cssRules[i].style.backgroundImage = 'url("assets/background/background-night.png")'
+            }
         }
     </script>
 </body>

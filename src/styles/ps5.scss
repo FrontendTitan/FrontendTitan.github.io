@@ -1,5 +1,10 @@
 .body {
     padding: 31px;
+
+}
+
+.game-section-title {
+    animation: fadeIn 1s ease-in-out backwards 1s;
 }
 
 .flex-body {
@@ -8,6 +13,7 @@
     align-items: center;
     flex-wrap: wrap; // Allow the flex items to wrap onto multiple lines
     width: 100%; // Take up all available width
+    animation: fadeIn 1s ease-in-out backwards;
 
     >* {
         opacity: 0; // Start with opacity 0
@@ -31,7 +37,7 @@
 }
 
 .header-p {
-    animation: fadeIn 1s ease-in-out backwards 1.3s; // Apply the fade-in animation to the paragraph, starting after 2s
+    animation: fadeIn 1s ease-in-out backwards 0.7s; // Apply the fade-in animation to the paragraph, starting after 2s
 }
 
 .card {
@@ -41,9 +47,8 @@
 
 .card {
     margin: 10px; // Add some margin to separate the cards
-    max-width: 300px;
+    width: 100%; // Set a fixed width for the cards
     max-height: 130px;
-    width: 300px; // Set a fixed width for the cards
     height: 130px; // Set a fixed height for the cards
     border-radius: 10px;
     border: 2px solid white;
@@ -70,4 +75,22 @@
             background-color: #555; // Change the background color of the button when hovering
         }
     }
+}
+
+#dev-panel-ps5 {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    background: #000;
+    color: #fff;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid #fff;
+    display: none;
+}
+
+.warning-div {
+    animation: fadeIn 1s ease-in-out backwards 2s;
 }

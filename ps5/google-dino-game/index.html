@@ -30,10 +30,33 @@
             font-family: 'PressStart2P-Regular';
             src: url('./assets/font/PressStart2P-Regular.ttf') format('truetype');
         }
+
+        .main-a {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        .main-a:nth-child(2) {
+            bottom: 30px;
+        }
+
+        .main-a:hover {
+            text-decoration: underline;
+        }
+
+        .main-a:active {
+            color: #f00;
+        }
     </style>
 </head>
 
 <body>
+    <a class="main-a" href="/">Back To Home</a>
+    <a class="main-a" href="/ps5">Game Picker</a>
+
     <canvas width="1600" height="900"></canvas>
 
     <div id="gameOverScreen"
@@ -62,6 +85,27 @@
         document.body.appendChild(startButton)
     </script>
 
+    <!-- This script contains code for URL Parameters which don't need
+        access to player -->
+    <script>
+        const urlParams = new URLSearchParams(window.location.search)
+
+        if (urlParams.has('darkMode')) {
+            // grab [0] css stylesheet
+            const css = document.styleSheets[0]
+
+            const rule = css.cssRules[0]
+            rule.style.backgroundColor = 'rgb(44, 44, 44)'
+
+            document.querySelectorAll('.main-a').forEach(a => {
+                a.style.color = 'white'
+            })
+
+            startButton.style.color = 'white'
+            startButton.style.backgroundColor = 'gray'
+        }
+    </script>
+
     <!-- This script contains the loading of assets and methods 
         For this game, I decided to try out an Object-Oriened
         approach, because it makes me feel like a better programmer
@@ -73,6 +117,9 @@
 
         canvas.width = window.innerWidth
         canvas.height = window.innerHeight
+
+        // Cactus and Ground Speed
+        const speed = navigator.vendor === 'Sony Interactive Entertainment Inc.' ? canvas.width / 130 : canvas.width / 200
 
         // Dino
         const DinoImages = {
@@ -132,7 +179,7 @@
                 this.width = 50
                 this.height = 100
                 this.speed = 5
-                this.jumpValue = 16
+                this.jumpValue = new URLSearchParams(window.location.search).has('lowGravity') ? 21 : 16
                 this.gravity = 0.7
                 this.velocity = 0
                 this.groundLevel = canvas.height + 5
@@ -176,6 +223,7 @@
                 this.height = 15
                 this.image = new Image()
                 this.image.src = EnvImagesPath.Track
+                this.speed = speed
             }
 
             draw() {
@@ -183,7 +231,7 @@
             }
 
             move() {
-                this.x -= dino.speed
+                this.x -= this.speed
                 if (this.x + this.width <= 0)
                     this.x = canvas.width - this.width
 
@@ -200,7 +248,7 @@
                 this.height = 95
                 this.hitboxWidth = 0
                 this.hitboxHeight = 80
-                this.speed = dino.speed / 1.6
+                this.speed = speed
                 this.image = [CactusImages.Large1, CactusImages.Large2, CactusImages.Large3, CactusImages.Small1, CactusImages.Small2, CactusImages.Small3][Math.floor(Math.random() * 6)]
             }
 
@@ -271,7 +319,7 @@
                 const formattedScore = Math.floor(this.score / 19).toString().padStart(5, '0')
 
                 let highscore = localStorage.getItem('highscore')
-                if (Math.floor(this.score / 19) > highscore) {
+                if (highscore === null || Math.floor(this.score / 19) > highscore) {
                     highscore = Math.floor(this.score / 19)
                     localStorage.setItem('highscore', highscore)
                 }
@@ -311,7 +359,6 @@
 
                 if (dino.initlialClick) {
                     ground.draw()
-                    ground.move()
                     game.updateScore()
                 }
             }
@@ -319,7 +366,13 @@
             for (let i = 0; i < cacti.length; i++) {
                 const cactus = cacti[i]
                 cactus.draw()
-                cactus.move()
+                if (dino.initlialClick) {
+                    cactus.move()
+                }
+            }
+
+            if (dino.initlialClick) {
+                ground.move()
             }
 
             cacti = cacti.filter(cactus => cactus.x + cactus.width > 0)
@@ -346,7 +399,6 @@
 
             cacti.forEach(cactus => cactus.checkCollision(dino))
 
-
             clouds.forEach((cloud, index) => {
                 cloud.draw()
                 cloud.move()
@@ -358,11 +410,10 @@
             })
         }
 
-        const fps = 90
+        const fps = 60
         let interval = 1000 / fps
         let then = performance.now()
         let isRun1 = true
-
 
         startButton.addEventListener('click', () => {
             startButton.style.display = 'none'
@@ -431,6 +482,8 @@
                 modal.innerHTML = `
                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
                         <h1>Resize the window to play the game</h1>
+                        <a href="/">Back To Home</a>
+                        <a href="/ps5">Game Picker</a>
                     </div>
                 `
                 document.body.appendChild(modal)

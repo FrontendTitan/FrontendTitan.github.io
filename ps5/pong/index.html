@@ -122,7 +122,7 @@
 
         // Paddle properties
         const paddleWidth = 10
-        const paddleHeight = 80
+        const paddleHeight = new URLSearchParams(window.location.search).get('smallPaddles') ? 40 : new URLSearchParams(window.location.search).get('largePaddles') ? 120 : 80
         let player1Y = canvas.height / 2 - paddleHeight / 2
         let player2Y = canvas.height / 2 - paddleHeight / 2
         const paddleSpeed = 5
@@ -318,8 +318,7 @@
             console.log(`${currentDate} : Player hit the ball`)
 
             // Decide if ai will miss the ball
-
-            willAIMissBall = Math.random() < 0.35
+            willAIMissBall = new URLSearchParams(window.location.search).get('impossible') ? false : Math.random() < 0.35
             console.info(`Will AI miss the ball: ${willAIMissBall}`)
 
             if (willAIMissBall) {

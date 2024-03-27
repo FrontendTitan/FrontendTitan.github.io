@@ -123,8 +123,11 @@
     <a href="/ps5">Game Picker</a>
     <h1>Hangman Game</h1>
     <div id="word-container"></div>
-    <div id="guesses-container">
-        <p>Guesses: <span id="guesses"></span></p>
+    <div style='display: flex; justify-content: center;'>
+        <div id="guesses-container">
+            <p>Guesses: <span id="guesses"></span></p>
+        </div>
+        <div id='timer' style='margin-left: 10px;'></div>
     </div>
     <div id="input-container">
         <input type="text" id="guess-input" placeholder="Enter a letter">
@@ -163,7 +166,7 @@
 
     <script>
         // Hangman game logic
-        const words = [
+        let words = [
             "apple", "banana", "cherry", "durian", "elderberry", "fig", "grape", "honeydew", "kiwi", "lemon",
             "mango", "nectarine", "orange", "pear", "quince", "raspberry", "strawberry", "tangerine", "watermelon",
             "avocado", "blueberry", "coconut", "dragonfruit", "eggplant", "fennel", "grapefruit", "huckleberry",
@@ -171,6 +174,56 @@
             "tomato", "ugli fruit", "vanilla", "walnut", "xigua", "yam", "zucchini", "apricot", "blackberry",
             "cantaloupe", "date", "elderflower"
         ]
+
+        const urlParams = new URLSearchParams(window.location.search)
+        if (urlParams.get('hard'))
+            words = [
+                "acquaintance", "benevolent", "catastrophe", "deprecate", "eccentric", "fathom", "garrulous", "haphazard", "impetuous", "juxtapose",
+                "kaleidoscope", "labyrinth", "magnanimous", "nefarious", "obsequious", "paradox", "quintessential", "resilient", "serendipity", "trepidation",
+                "ubiquitous", "vex", "whimsical", "xenophobia", "yearn", "zealous", "abhor", "blatant", "candid", "devious",
+                "eloquent", "fickle", "gregarious", "humble", "impeccable", "jubilant", "keen", "lucid", "meticulous", "nonchalant",
+                "opulent", "pensive", "quixotic", "ravenous", "sanguine", "tenacious", "unassuming", "vibrant", "witty", "zeal"
+            ]
+
+        if (urlParams.get('timer')) {
+            document.getElementById('timer').innerHTML = '<p>Timer: <span id="timer-display"></span></p>'
+
+            // Set the countdown duration in minutes
+            let countdownDuration = 10 // Change this to 10 for a 10-minute countdown
+
+            // Convert minutes to seconds
+            countdownDuration *= 60
+
+            // Display the countdown timer
+            let timerDisplay = document.getElementById('timer-display')
+            timerDisplay.textContent = formatTime(countdownDuration)
+
+            // Start the countdown
+            let countdownInterval = setInterval(() => {
+                countdownDuration--
+                timerDisplay.textContent = formatTime(countdownDuration)
+
+                // Check if the countdown has reached 0
+                if (countdownDuration === 0) {
+                    clearInterval(countdownInterval)
+                    // Add your logic for when the countdown ends here
+
+                    alert("Time's up! Click OK to restart the game.")
+                    location.reload()
+                }
+            }, 1000)
+        }
+
+        function formatTime(duration) {
+            let minutes = Math.floor(duration / 60)
+            let seconds = duration % 60
+
+            // Add leading zeros if necessary
+            minutes = minutes.toString().padStart(2, '0')
+            seconds = seconds.toString().padStart(2, '0')
+
+            return `${minutes}:${seconds}`
+        }
 
         let word = ""
         let guessedLetters = []
