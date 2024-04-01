@@ -1,5 +1,5 @@
 |===================================================================|
-|   Main Games for the video: (31 games):
+|   Main Games for the video: (40 games):
 |          
 | * Hangman           + Variants ✅              
 | * Minesweeper       + Variants ✅               
@@ -74,46 +74,45 @@
 | 
 |
 |===================================================================|
-|   The rest of the 41 games:
+|   The rest of the 40 games:
 |
-|  1. Guess the Number ✅
-|  2. Reverse Guess the Number
-|  3. Rock Paper Scissors ✅
-|  4. Rock Paper Scissors (With AI Opponent)
-|  5. Memory Matching Game ✅
-|  6. Memory Matching Game (Different Themes)
-|  7. Whack-a-Mole
-|  8. Connect Four
-|  9. Sudoku
-| 10. Tic-Tac-Toe ✅
-| 11. Tic-Tac-Toe 4x4
-| 12. Tic-Tac-Toe 5x5
-| 13. Tic-Tac-Toe (With AI Opponent)
-| 14. Dice Roll
-| 15. Coin Flip
-| 16. Countdown Timer Challenge
-| 17. Countdown Timer Challenge 2min
-| 18. Countdown Timer Challenge 5min
-| 19. Countdown Timer Challenge 10min
-| 20. Color Matching Game
-| 21. Simple Reaction Time Test
-| 22. Dice roll with GBP 1 Pound 
-| 23. Dice roll with GBP 2 Pound
-| 24. Dice roll with GBP 50p
-| 25. Dice roll with GBP 10p
-| 26. Dice roll with GBP 5p
-| 27. Dice roll with GBP 1p
-| 28. Dice roll with USD 1$
-| 29. Dice roll with USD 50c
-| 30. Dice roll with USD 25c
-| 31. Dice roll with USD 10c
-| 32. Dice roll with USD 5c
-| 33. Dice roll with USD 1c
-| 34. Dice roll with RON 1 ban
-| 35. Dice roll with RON 5 bani
-| 36. Dice roll with RON 10 bani
-| 37. Dice roll with RON 50 bani
-| 38. Dice roll with FrontendTitan Profile Picture
-| 39. Simple Math Game
-| 40. Complex Math Game
-| 41. Breakout ✅
+| * Breakout ✅
+| * Guess the Number ✅
+| * Rock Paper Scissors (with friend) ✅
+| * Rock Paper Scissors (With AI Opponent) ✅
+| * Memory Matching Game ✅
+| * Memory Matching Game (Different Themes)
+| * Whack-a-Mole
+| * Connect Four
+| * Sudoku
+| * Tic-Tac-Toe ✅
+| * Tic-Tac-Toe 4x4
+| * Tic-Tac-Toe 5x5
+| * Tic-Tac-Toe (With AI Opponent)
+| * Dice Roll
+| * Coin Flip
+| * Countdown Timer Challenge
+| * Countdown Timer Challenge 2min
+| * Countdown Timer Challenge 5min
+| * Countdown Timer Challenge 10min
+| * Color Matching Game
+| * Simple Reaction Time Test
+| * Dice roll with GBP 1 Pound 
+| * Dice roll with GBP 2 Pound
+| * Dice roll with GBP 50p
+| * Dice roll with GBP 10p
+| * Dice roll with GBP 5p
+| * Dice roll with GBP 1p
+| * Dice roll with USD 1$
+| * Dice roll with USD 50c
+| * Dice roll with USD 25c
+| * Dice roll with USD 10c
+| * Dice roll with USD 5c
+| * Dice roll with USD 1c
+| * Dice roll with RON 1 ban
+| * Dice roll with RON 5 bani
+| * Dice roll with RON 10 bani
+| * Dice roll with RON 50 bani
+| * Dice roll with FrontendTitan Profile Picture
+| * Simple Math Game
+| * Complex Math Game
