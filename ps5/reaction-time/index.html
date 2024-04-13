@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Reaction Time</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #reaction-container {
+            margin-top: 50px;
+        }
+
+        #start-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #2f2f2f;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #target {
+            display: none;
+            width: 100px;
+            height: 100px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            position: absolute;
+            top: calc(50% - 50px);
+            left: calc(50% - 50px);
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <h1>Reaction Time Test</h1>
+    <button id="start-button">Start Test</button>
+    <div id="reaction-container">
+        <div id="target"></div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const startButton = document.getElementById('start-button')
+        const target = document.getElementById('target')
+        const result = document.getElementById('result')
+        let startTime, endTime
+
+        startButton.addEventListener('click', () => {
+            startButton.style.display = 'none'
+            target.style.display = 'block'
+            result.textContent = ''
+
+            setTimeout(() => {
+                target.style.backgroundColor = '#3498db'
+                startTime = new Date().getTime()
+            }, Math.random() * 2000 + 1000)
+
+            target.addEventListener('click', () => {
+                endTime = new Date().getTime()
+                const reactionTime = (endTime - startTime) / 1000
+
+                target.style.backgroundColor = '#2ecc71'
+
+                setTimeout(() => {
+                    alert(`Your reaction time: ${reactionTime.toFixed(3)} seconds`)
+                    location.reload()
+                }, 300)
+            })
+        });
+    </script>
+</body>
+
+</html>

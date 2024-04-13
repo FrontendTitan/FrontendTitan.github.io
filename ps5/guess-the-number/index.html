@@ -14,8 +14,8 @@
 
     <div>
         <div class="container">
-            <h1>Guess The Number</h1>
-            <p>Guess a number between 1 and 10:</p>
+            <h1 id='header'>Guess The Number</h1>
+            <p id='description'>Guess a number between 1 and 10:</p>
             <input type="number" id="guessInput" min="1" max="10">
             <button onclick="checkGuess()">Submit</button>
             <p id="result"></p>
@@ -38,7 +38,8 @@
     </div>
 
     <script>
-        var randomNumber = Math.floor(Math.random() * 10) + 1
+        let randomNumber = Math.floor(Math.random() * 10) + 1
+
         function checkGuess() {
             var guess = parseInt(document.getElementById("guessInput").value)
 
@@ -46,7 +47,7 @@
                 document.getElementById("result").innerHTML = "Congratulations! You guessed the correct number."
                 document.body.style.backgroundColor = "green"
                 setTimeout(() => {
-                    location.reload() // Refresh the page
+                    location.reload()
                 }, 2500)
             } else if (guess < randomNumber) {
                 document.getElementById("result").innerHTML = "Too low! Try again."

@@ -108,6 +108,9 @@
         let gameEnded = false
         let moves = 0
 
+        const args = new URLSearchParams(window.location.search)
+        const ai = args.get('ai') ? true : false
+
         cells.forEach(cell => {
             cell.addEventListener('click', handleCellClick)
         })
@@ -124,6 +127,34 @@
                 moves++
                 checkWinner()
             }
+
+            if (ai && !gameEnded) {
+                setTimeout(() => {
+                    aiMove()
+                }, 500)
+            }
+        }
+
+        function aiMove() {
+            const emptyCells = []
+
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].textContent === '') {
+                    emptyCells.push(i)
+                }
+            }
+
+            const randomIndex = Math.floor(Math.random() * emptyCells.length)
+
+            const cell = cells[emptyCells[randomIndex]]
+
+            cell.textContent = 'o'
+            cell.classList.add('o')
+            currentPlayer = 'x'
+
+            document.querySelector('.player-text').textContent = `Player ${currentPlayer.toUpperCase()}'s Turn`
+            moves++
+            checkWinner()
         }
 
         function checkWinner() {

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrontendTitan - Tic-Tac-Toe</title>
+</head>
+
+<body />
+
+<style>
+    body {
+        background-color: #222;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        width: 300px;
+        height: 300px;
+    }
+
+    .square {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        cursor: pointer;
+        user-select: none;
+        background-color: #444;
+        border: 1px solid #555;
+    }
+
+    a {
+        position: absolute;
+        top: 100px;
+        left: 10px;
+        text-decoration: none;
+        color: white;
+    }
+
+    a:nth-child(2) {
+        top: 123px;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    a:active {
+        color: #f00;
+    }
+</style>
+
+<a href="/">Back To Home</a>
+<a href="/ps5">Game Picker</a>
+
+<script>
+    class TicTacToe {
+        constructor(rows, columns) {
+            if (rows !== 4 && rows !== 5 && columns !== 4 && columns !== 5) {
+                throw new Error('Invalid grid size. TicTacToe game only supports 4x4 or 5x5 grids.')
+            }
+
+            this.rows = rows
+            this.columns = columns
+            this.currentPlayer = 'X' // Player X starts the game
+            this.board = new Array(rows).fill(null).map(() => new Array(columns).fill(null))
+        }
+
+        createBoard() {
+            const boardElement = document.createElement('div')
+            boardElement.className = 'board'
+            boardElement.style.gridTemplateColumns = `repeat(${this.columns}, 1fr)`
+            boardElement.style.gridTemplateRows = `repeat(${this.rows}, 1fr)`
+
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.columns; j++) {
+                    const square = document.createElement('div')
+                    square.className = 'square'
+                    square.dataset.row = i
+                    square.dataset.column = j
+
+                    square.addEventListener('click', () => {
+                        this.handleMove(i, j)
+                    })
+
+                    boardElement.appendChild(square)
+                }
+            }
+
+            document.body.appendChild(boardElement)
+        }
+
+        handleMove(row, column) {
+            if (!this.board[row][column]) { // Check if the square is empty
+                const square = document.querySelector(`.square[data-row="${row}"][data-column="${column}"]`)
+                this.board[row][column] = this.currentPlayer
+                square.textContent = this.currentPlayer
+
+                if (this.checkWinner(row, column)) {
+                    alert(`Player ${this.currentPlayer} wins!`)
+                    this.resetBoard()
+                } else if (this.checkDraw()) {
+                    alert('It\'s a draw!')
+                    this.resetBoard()
+                } else {
+                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X' // Switch players
+                }
+            }
+        }
+
+        checkWinner(row, column) {
+            const player = this.currentPlayer
+            const directions = [
+                [[-1, -1], [1, 1]],   // Diagonal (top-left to bottom-right)
+                [[-1, 1], [1, -1]],   // Diagonal (top-right to bottom-left)
+                [[-1, 0], [1, 0]],    // Vertical
+                [[0, -1], [0, 1]]     // Horizontal
+            ]
+
+            for (const direction of directions) {
+                let count = 1
+                for (const d of direction) {
+                    let [dx, dy] = d
+                    let newRow = row + dx
+                    let newColumn = column + dy
+                    while (newRow >= 0 && newRow < this.rows && newColumn >= 0 && newColumn < this.columns &&
+                        this.board[newRow][newColumn] === player) {
+                        count++
+                        newRow += dx
+                        newColumn += dy
+                    }
+                }
+                if (count >= 4) {
+                    return true
+                }
+            }
+            return false
+        }
+
+        checkDraw() {
+            // Check if the board is full
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.columns; j++) {
+                    if (!this.board[i][j]) {
+                        return false // If there's an empty square, the game is not a draw
+                    }
+                }
+            }
+            return true // If no empty square is found, it's a draw
+        }
+
+        resetBoard() {
+            this.board = new Array(this.rows).fill(null).map(() => new Array(this.columns).fill(null))
+            const squares = document.querySelectorAll('.square')
+            squares.forEach(square => {
+                square.textContent = ''
+            })
+            this.currentPlayer = 'X' // Player X starts the game
+        }
+    }
+
+
+    const urlParams = new URLSearchParams(window.location.search)
+    let gridSize
+
+    if (urlParams.get('grid') === '4x4')
+        gridSize = 4
+    else if (urlParams.get('grid') === '5x5')
+        gridSize = 5
+
+    if (gridSize === 5) {
+        const reminder = document.createElement('h3')
+        reminder.textContent = 'Reminder: You only need to connect 4 in a row to win.'
+        reminder.style.color = 'white'
+        reminder.style.position = 'absolute'
+        reminder.style.fontFamily = 'sans-serif'
+        reminder.style.top = '10px'
+
+        document.body.appendChild(reminder)
+    }
+
+    new TicTacToe(gridSize, gridSize)
+        .createBoard()
+</script>
+
+</html>

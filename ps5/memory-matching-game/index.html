@@ -113,7 +113,32 @@
     <div class="game-container" id="game-board"></div>
 
     <script>
-        const cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F']
+        let cards, theme, urlSearchParams
+
+        urlSearchParams = new URLSearchParams(window.location.search)
+
+        const themeMappings = {
+            'letters': ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E', 'F', 'F'],
+            'cars': ['Audi', 'Audi', 'BMW', 'BMW', 'Mercedes', 'Mercedes', 'Ferrari', 'Ferrari', 'Porsche', 'Porsche', 'Bugatti', 'Bugatti'],
+            'numbers': ['1', '1', '2', '2', '3', '3', '4', '4', '5', '5', '6', '6'],
+            'countries': ['USA', 'USA', 'Germany', 'Germany', 'Japan', 'Japan', 'China', 'China', 'India', 'India', 'UK', 'UK'],
+            'brands': ['Apple', 'Apple', 'Samsung', 'Samsung', 'Xiaomi', 'Xiaomi', 'Huawei', 'Huawei', 'OnePlus', 'OnePlus', 'Sony', 'Sony'],
+            'animals': ['Dog', 'Dog', 'Cat', 'Cat', 'Elephant', 'Elephant', 'Lion', 'Lion', 'Tiger', 'Tiger', 'Cow', 'Cow'],
+            'consoles': ['PS5', 'PS5', 'Xbox Series X', 'Xbox Series X', 'Nintendo Switch', 'Nintendo Switch', 'PC', 'PC', 'PS4', 'PS4', 'Xbox One', 'Xbox One'],
+            'games': ['Hangman', 'Hangman', 'Minesweeper', 'Minesweeper', 'Pong', 'Pong', 'Space Invaders', 'Space Invaders', 'Tetris', 'Tetris', 'Flappy Bird', 'Flappy Bird'],
+            'continents': ['North America', 'North America', 'Europe', 'Europe', 'Asia', 'Asia', 'South America', 'South America', 'Africa', 'Africa', 'Australia', 'Australia'],
+            'planets': ['Mercury', 'Mercury', 'Venus', 'Venus', 'Earth', 'Earth', 'Mars', 'Mars', 'Jupiter', 'Jupiter', 'Saturn', 'Saturn'],
+            'sports': ['Football', 'Football', 'Basketball', 'Basketball', 'Tennis', 'Tennis', 'Cricket', 'Cricket', 'Hockey', 'Hockey', 'Volleyball', 'Volleyball'],
+            'colors': ['Red', 'Red', 'Green', 'Green', 'Blue', 'Blue', 'Yellow', 'Yellow', 'Purple', 'Purple', 'Orange', 'Orange'],
+            'programming': ['Javascript', 'Javascript', 'Typescript', 'Typescript', 'HTML', 'HTML', 'CSS', 'CSS', 'React', 'React', 'Angular', 'Angular'],
+            'software': ['Windows', 'Windows', 'MacOS', 'MacOS', 'Linux', 'Linux', 'Android', 'Android', 'iOS', 'iOS', 'Chrome OS', 'Chrome OS'],
+            'moreCountries': ['Germany', 'Germany', 'Brazil', 'Brazil', 'France', 'France', 'Spain', 'Spain', 'Italy', 'Italy', 'Poland', 'Poland'],
+            'moreCars': ['Ford', 'Ford', 'Toyota', 'Toyota', 'Nissan', 'Nissan', 'Hyundai', 'Hyundai', 'Renault', 'Renault', 'Kia', 'Kia']
+        }
+
+        theme = urlSearchParams.get('theme')
+        cards = themeMappings[theme]
+
         let flippedCards = []
         let matchedCards = []
 

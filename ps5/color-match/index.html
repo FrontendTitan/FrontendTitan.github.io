@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Color Match</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .color-box {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #target-color {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        a {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: black;
+        }
+
+        a:nth-child(2) {
+            top: 30px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+
+    <h1>Color Match</h1>
+    <div id="target-color">Target Color: </div>
+    <div class="container" id="color-container"></div>
+
+    <script>
+        const colors = ['red', 'blue', 'green', 'yellow', 'orange', 'purple']
+        const targetIndex = Math.floor(Math.random() * colors.length)
+        const targetColor = colors[targetIndex]
+        document.getElementById('target-color').textContent += targetColor.toUpperCase()
+
+        const container = document.getElementById('color-container')
+
+        colors.forEach(color => {
+            const colorBox = document.createElement('div')
+            colorBox.classList.add('color-box')
+            colorBox.style.backgroundColor = color
+            colorBox.addEventListener('click', () => {
+                if (color === targetColor) {
+                    alert('Congratulations! You matched the color!')
+                    location.reload()
+                } else {
+                    alert('Try again! Wrong color!')
+                }
+            })
+            container.appendChild(colorBox)
+        });
+    </script>
+</body>
+
+</html>

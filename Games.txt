@@ -74,45 +74,68 @@
 | 
 |
 |===================================================================|
-|   The rest of the 40 games:
+|   The rest of the 48 games:
 |
 | * Breakout ✅
 | * Guess the Number ✅
 | * Rock Paper Scissors (with friend) ✅
 | * Rock Paper Scissors (With AI Opponent) ✅
 | * Memory Matching Game ✅
-| * Memory Matching Game (Different Themes)
-| * Whack-a-Mole
-| * Connect Four
-| * Sudoku
+| * Memory Matching Game Car Brands ✅
+| * Memory Matching Game Numbers ✅
+| * Memory Matching Game Countries ✅
+| * Memory Matching Game Brands ✅
+| * Memory Matching Game Animals ✅
+| * Memory Matching Game Consoles ✅
+| * Memory Matching Game Games ✅
+| * Memory Matching Game Continents ✅
+| * Memory Matching Game Planets ✅
+| * Memory Matching Game Sports ✅
+| * Memory Matching Game Colors ✅
+| * Whack-a-Mole ✅
+| * Connect Four ✅
+| * Sudoku ✅
 | * Tic-Tac-Toe ✅
-| * Tic-Tac-Toe 4x4
-| * Tic-Tac-Toe 5x5
-| * Tic-Tac-Toe (With AI Opponent)
-| * Dice Roll
-| * Coin Flip
-| * Countdown Timer Challenge
-| * Countdown Timer Challenge 2min
-| * Countdown Timer Challenge 5min
-| * Countdown Timer Challenge 10min
-| * Color Matching Game
-| * Simple Reaction Time Test
-| * Dice roll with GBP 1 Pound 
-| * Dice roll with GBP 2 Pound
-| * Dice roll with GBP 50p
-| * Dice roll with GBP 10p
-| * Dice roll with GBP 5p
-| * Dice roll with GBP 1p
-| * Dice roll with USD 1$
-| * Dice roll with USD 50c
-| * Dice roll with USD 25c
-| * Dice roll with USD 10c
-| * Dice roll with USD 5c
-| * Dice roll with USD 1c
-| * Dice roll with RON 1 ban
-| * Dice roll with RON 5 bani
-| * Dice roll with RON 10 bani
-| * Dice roll with RON 50 bani
-| * Dice roll with FrontendTitan Profile Picture
-| * Simple Math Game
-| * Complex Math Game
+| * Tic-Tac-Toe 4x4 ✅
+| * Tic-Tac-Toe 5x5 ✅
+| * Tic-Tac-Toe (With AI Opponent) ✅
+| * Countdown Timer Challenge 1 min ✅
+| * Countdown Timer Challenge 2 min ✅
+| * Countdown Timer Challenge 5 min ✅
+| * Countdown Timer Challenge 10 min ✅
+| * Color Matching Game ✅
+| * Simple Reaction Time Test ✅
+| * Coin Flip with GBP 1 Pound ✅
+| * Coin Flip with GBP 2 Pound ✅
+| * Coin Flip with GBP 50p ✅
+| * Coin Flip with GBP 10p ✅
+| * Coin Flip with GBP 5p ✅
+| * Coin Flip with GBP 1p ✅
+| * Coin Flip with USD 1$ ✅
+| * Coin Flip with USD 50c ✅
+| * Coin Flip with USD 25c ✅
+| * Coin Flip with USD 10c ✅
+| * Coin Flip with USD 5c ✅
+| * Coin Flip with USD 1c ✅
+| * Coin Flip with RON 1 ban ✅
+| * Coin Flip with RON 5 bani ✅
+| * Coin Flip with RON 10 bani ✅
+| * Coin Flip with RON 50 bani ✅
+| * Coin Flip with FrontendTitan Profile Picture ✅
+| * Simple Math Game ✅
+| * Complex Math Game ✅ 
+| 
+| * Coin Flip EUR1 ✅
+| * Coin Flip EUR2 ✅
+| * Coin Flip EUR0.50 ✅
+| * Coin Flip EUR0.20 ✅
+| * Coin Flip EUR0.10 ✅
+| * Coin Flip EUR0.05 ✅
+| * Coin Flip EUR0.02 ✅
+| * Coin Flip EUR0.01 ✅
+| * Memory Matching Game Programming Languages ✅
+| * Memory Matching Game Software ✅
+| * Memory Matching Game Countries+ ✅
+| * Memory Matching Game Cars+ ✅
+| 
+| I FINISHED THEM ALL NO WAY!!

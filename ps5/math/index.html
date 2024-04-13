@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrontendTitan - Math Game</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            margin-top: 50px;
+        }
+
+        #question-container {
+            margin-top: 20px;
+        }
+
+        .question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #answer-input {
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #2f2f2f;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        a {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        a:nth-child(2) {
+            top: 45px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: gray;
+        }
+
+        a:active {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <h1>Math Game</h1>
+    <div id="question-container">
+        <div id="question" class="question"></div>
+        <input type="number" id="answer-input" placeholder="Enter your answer">
+        <button id="submit-button">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min
+        }
+
+        function generateQuestion(complex) {
+            const operand1 = getRandomInt(1, complex ? 100 : 10)
+            const operand2 = getRandomInt(1, complex ? 100 : 10)
+            let operator
+            if (complex) {
+                operator = ['+', '-', '*'][getRandomInt(0, 2)]
+            } else {
+                operator = ['+', '-'][getRandomInt(0, 1)]
+            }
+            const questionText = `${operand1} ${operator} ${operand2} = `
+            return { text: questionText, answer: eval(operand1 + operator + operand2) }
+        }
+
+        function initializeGame(complex) {
+            const questionContainer = document.getElementById('question')
+            const answerInput = document.getElementById('answer-input')
+            const result = document.getElementById('result')
+
+            const question = generateQuestion(complex)
+            questionContainer.textContent = question.text
+
+            document.getElementById('submit-button').addEventListener('click', () => {
+                const userAnswer = parseInt(answerInput.value)
+                if (userAnswer === question.answer) {
+                    result.textContent = 'Correct!'
+                } else {
+                    result.textContent = 'Incorrect!'
+                }
+                answerInput.value = ''
+                setTimeout(() => {
+                    result.textContent = ''
+                    const newQuestion = generateQuestion(complex)
+                    questionContainer.textContent = newQuestion.text
+                }, 1500)
+            })
+        }
+
+        // Check URL parameters for complex mode
+        const urlParams = new URLSearchParams(window.location.search)
+        const complexMode = urlParams.get('complex') === 'true'
+
+        // Initialize the game with the determined mode
+        initializeGame(complexMode);
+    </script>
+</body>
+
+</html>

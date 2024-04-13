@@ -69,14 +69,26 @@
     <a href="/ps5">Game Picker</a>
     <div class="game-container">
         <div class="choices">
-            <div class="choice" onclick="play('rock')">Rock</div>
-            <div class="choice" onclick="play('paper')">Paper</div>
-            <div class="choice" onclick="play('scissors')">Scissors</div>
+            <div class="choice" id='rock'>Rock</div>
+            <div class="choice" id='paper'>Paper</div>
+            <div class="choice" id='scissors'>Scissors</div>
         </div>
         <div class="result"></div>
     </div>
 
     <script>
+        const isFriendPlaying = new URLSearchParams(window.location.search).get('friend')
+
+        if (isFriendPlaying) {
+            Array.from(document.getElementsByClassName('choice')).forEach(element => {
+                element.addEventListener('click', () => playWithFriend(element.id))
+            })
+        } else {
+            Array.from(document.getElementsByClassName('choice')).forEach(element => {
+                element.addEventListener('click', () => play(element.id))
+            })
+        }
+
         function play(userChoice) {
             const choices = ['rock', 'paper', 'scissors']
             const computerChoice = choices[Math.floor(Math.random() * choices.length)]
@@ -96,6 +108,44 @@
             }
 
             alert(`Computer chose ${computerChoice}. ${result}`)
+            location.reload()
+        }
+
+        function playWithFriend(p1Option) {
+            let p2Option
+
+            Array.from(document.getElementsByClassName('choice')).forEach(element => {
+                try {
+                    element.removeEventListener('click', () => playWithFriend(element.id))
+                } catch (error) {
+                    console.log(error)
+                }
+
+                element.addEventListener('click', () => {
+                    p2Option = element.id
+                    check(p1Option, p2Option)
+                })
+            })
+        }
+
+        function check(p1Option, p2Option) {
+            if (p1Option === 'rock' && p2Option === 'scissors')
+                alert("Player 1 Wins!")
+            else if (p1Option === 'paper' && p2Option === 'rock')
+                alert("Player 1 Wins!")
+            else if (p1Option === 'scissors' && p2Option === 'paper')
+                alert("Player 1 Wins!")
+            else if (p2Option === 'rock' && p1Option === 'scissors')
+                alert("Player 2 Wins!")
+            else if (p2Option === 'paper' && p1Option === 'rock')
+                alert("Player 2 Wins!")
+            else if (p2Option === 'scissors' && p1Option === 'paper')
+                alert("Player 2 Wins!")
+            else
+                alert("It's a tie!")
+
+            alert(`Player 1 chose ${p1Option}. \nPlayer 2 chose ${p2Option}.`)
+
             location.reload()
         }
     </script>

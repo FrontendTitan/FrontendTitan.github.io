@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>FrontendTitan - Coin Flip</title>
+    <style>
+        body {
+            background-color: rgb(12, 12, 12);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .coin {
+            width: 200px;
+            height: 200px;
+            background-image: url('img/gbp-1/gbp-1-front.png');
+            /* Replace with your image */
+            background-size: cover;
+            border-radius: 50%;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotateY(0deg);
+            }
+
+            100% {
+                transform: rotateY(180deg);
+            }
+        }
+
+        @keyframes reverse-spin {
+            0% {
+                transform: rotateY(180deg);
+            }
+
+            100% {
+                transform: rotateY(0deg);
+            }
+        }
+
+        a {
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            text-decoration: none;
+            color: white;
+        }
+
+        a:nth-child(2) {
+            top: 10px;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="coin"></div>
+
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search)
+        const coin = urlParams.get('coin')
+
+        const image = {
+            front: `img/${coin}/${coin}-front.png`,
+            back: `img/${coin}/${coin}-back.png`,
+            isBackImage: false
+        }
+
+        document.querySelector('.coin').style.backgroundImage = `url(${image.front})`
+
+        function flipCoin() {
+            var coin = document.querySelector('.coin')
+
+            if (image.isBackImage) {
+                image.isBackImage = false
+
+                setTimeout(() => {
+                    coin.style.transform = 'rotateY(0deg)'
+                    coin.style.backgroundImage = `url(${image.front})`
+                }, 250)
+            } else {
+                image.isBackImage = true
+
+                setTimeout(() => {
+                    coin.style.transform = 'rotateY(180deg)'
+                    coin.style.backgroundImage = `url(${image.back})`
+                }, 250)
+            }
+
+            if (image.isBackImage) {
+                coin.style.animation = `spin 0.5s linear`
+            } else {
+                coin.style.animation = 'reverse-spin 0.5s linear'
+            }
+        }
+
+        function flipMultipleTimes(count, callback) {
+            for (var i = 0; i < count; i++) {
+                setTimeout(() => {
+                    flipCoin()
+                }, i * 600)
+            }
+
+            setTimeout(callback, count * 600)
+        }
+
+        document.querySelector('.coin').addEventListener('click', () => {
+            const flipsToDo = Math.floor(Math.random() * 5) + 1
+            console.log(flipsToDo)
+
+            new Promise((resolve) => {
+                flipMultipleTimes(flipsToDo, resolve)
+            }).then(() => {
+                var image = document.querySelector('.coin').classList.contains('flipped') ? { isBackImage: true } : { isBackImage: false }
+                if (image.isBackImage)
+                    alert(`It landed on back/tails`)
+                else
+                    alert(`It landed on top/heads`)
+            })
+        });
+    </script>
+</body>
+
+</html>

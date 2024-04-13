@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Countdown Timer Challenge</title>
+</head>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        width: 472px;
+    }
+
+    img {
+        border-radius: 10px;
+        width: 472px;
+    }
+
+    h1 {
+        margin-bottom: -5px;
+    }
+
+    p {
+        max-width: 450px;
+    }
+
+    a {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        text-decoration: none;
+        color: black;
+    }
+
+    a:nth-child(2) {
+        top: 30px;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    a:active {
+        color: #f00;
+    }
+</style>
+
+<body>
+    <a href="/">Back To Home</a>
+    <a href="/ps5">Game Picker</a>
+
+    <div>
+        <div id="container"></div>
+        <div style='display: flex; height: 20px;'>
+            <button id='start'>Start</button>
+            <p id='time' style='transform: translateY(-14px) translateX(3px)'></p>
+        </div>
+    </div>
+</body>
+
+<script>
+    const args = new URLSearchParams(window.location.search)
+
+    let time = Number(args.get('time'))
+    let formattedTime
+
+    let randomChallenge
+    const challenges = []
+    const challengesList = {
+        '1min': [
+            {
+                name: 'Quick Clean',
+                description: 'Make your bed in one minute.',
+                difficulty: 'Easy',
+                img: 'https://th.bing.com/th/id/R.73a0cb0e318ab6150969df09ba2a5214?rik=G292cCR5J0o2hA&pid=ImgRaw&r=0'
+            },
+            {
+                name: 'Spot Cleaning',
+                description: 'Pick up and put away as many items as you can in one minute.',
+                difficulty: 'Medium',
+                img: 'https://th.bing.com/th/id/OIP.71TnKZ3lXhpOXvbwQl_d0gHaFL?rs=1&pid=ImgDetMain'
+            },
+            {
+                name: 'Basic Exercise',
+                description: 'Do as many push-ups as you can.',
+                difficulty: 'Hard',
+                img: 'https://th.bing.com/th/id/R.126f2bfc1eeca99d200f72d399542be9?rik=b7nbtj%2fMlAip0g&pid=ImgRaw&r=0'
+            }
+        ],
+
+        '2min': [
+            {
+                name: 'Gratitude',
+                description: 'Write down three things you are grateful for.',
+                difficulty: 'Easy',
+                img: 'https://media4.giphy.com/media/xix1onOcFoBdLHjWaS/giphy.gif?cid=790b7611f021fc7c7893b819c45210b855b9459f532218fa&rid=giphy.gif&ct=s'
+            },
+            {
+                name: 'Relax',
+                description: 'Listen to a song for two minutes that actually relaxes you.',
+                difficulty: 'Medium',
+                img: 'https://th.bing.com/th/id/R.965eb4d3406d44108659fab9c4ad8678?rik=VKFo9ssJKJurHg&riu=http%3a%2f%2fmedia.giphy.com%2fmedia%2ftqfS3mgQU28ko%2fgiphy.gif&ehk=iHagaH90IM%2b5bRbtw3ZIQSV3ISxbxZ88XO%2flhaUBPiQ%3d&risl=&pid=ImgRaw&r=0'
+            },
+            {
+                name: '6 Pack',
+                description: 'Do 50 situps.',
+                difficulty: 'Hard',
+                img: 'https://cdn.recmovement.com/95621926786.gif'
+            }
+        ],
+
+        '5min': [
+            {
+                name: 'Workout',
+                description: 'Start any workout you want, if you like the workout after 5 minutes, continue it.',
+                difficulty: 'Easy',
+                img: 'https://www.liveabout.com/thmb/oYcow_HDKzBgebNWQdAVlXaTOvA=/640x480/filters:no_upscale():max_bytes(150000):strip_icc()/ball-fail-5925b2c33df78cbe7e2215e6.gif'
+            },
+            {
+                name: 'High-Value Skill',
+                description: 'Decide a high-value skill that you want to learn. It only takes a few minutes to take life-altering decisions',
+                difficulty: 'Medium',
+                img: 'https://images.summitmedia-digital.com/cosmo/images/2017/07/14/This-Is-How-Many-Millionaires-There-Are-In-The-World-Right-Now.gif'
+            },
+            {
+                name: 'FrontendTitan',
+                description: 'Subscribe to the FrontendTitan YouTube Channel.',
+                difficulty: 'Hard',
+                img: '/ps5/coin-flip/img/ft/ft-back.png'
+            }
+        ],
+
+        '10min': [
+            {
+                name: 'Youtube',
+                description: 'Pick a video from the FrontendTitan YouTube Channel and watch it.',
+                difficulty: 'Easy',
+                img: '/ps5/coin-flip/img/ft/ft-front.png'
+            },
+            {
+                name: 'Poetry',
+                description: 'Write a poem in 10 minutes.',
+                difficulty: 'Medium',
+                img: 'https://media.giphy.com/media/VozbdlZOzq1O0/giphy.gif'
+            },
+            {
+                name: '100',
+                description: 'Do 100 pushups in 10 minutes.',
+                difficulty: 'Hard',
+                img: 'https://media0.giphy.com/media/YMkht8VN9qi6eWjQC0/giphy.gif'
+            },
+        ]
+    }
+
+    if (time === 60)
+        challenges.push(...challengesList['1min'])
+    else if (time === 120)
+        challenges.push(...challengesList['2min'])
+    else if (time === 300)
+        challenges.push(...challengesList['5min'])
+    else if (time === 600)
+        challenges.push(...challengesList['10min'])
+
+    randomChallenge = challenges[Math.floor(Math.random() * challenges.length)]
+
+    document.title = randomChallenge.name
+    document.getElementById('container').innerHTML = `
+        <h1>${randomChallenge.name}</h1>
+        <p>${randomChallenge.description}</p>
+        <p>Difficulty: ${randomChallenge.difficulty}</p>
+        <img src="${randomChallenge.img}" />
+    `
+
+    //  Loop
+    let gameLoopInterval
+
+    document.getElementById('start').addEventListener('click', function () {
+        gameLoop()
+    })
+
+    function gameLoop() {
+        const formatTime = (time) => `${Math.floor(time / 60)}:${time % 60}`
+        gameLoopInterval = setInterval(() => {
+            time -= 1
+            document.getElementById('time').innerHTML = formatTime(time)
+
+            if (time === 0) {
+                clearInterval(gameLoopInterval)
+                alert("Time's up! Click OK to restart the game.")
+                location.reload()
+            }
+        }, 1000)
+    }
+</script>
+
+</html>

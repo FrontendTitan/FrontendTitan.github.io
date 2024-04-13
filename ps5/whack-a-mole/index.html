@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <title>FrontendTitan - Whack-a-Mole</title>
+
+    <style>
+        body {
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        #game-container {
+            width: 400px;
+            height: 400px;
+            background-color: #222;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 5px;
+            padding: 5px;
+        }
+
+        .hole {
+            background-color: #333;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .mole {
+            background-color: #E53935;
+        }
+
+        #score {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #score,
+        #timer {
+            position: absolute;
+            top: 10px;
+        }
+
+        #score {
+            left: 10px;
+        }
+
+        #timer {
+            right: 10px;
+        }
+
+        .main-a {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+        }
+
+        .a2 {
+            bottom: 30px;
+        }
+
+        .main-a:hover {
+            text-decoration: underline;
+        }
+
+        .main-a:active {
+            color: #f00;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game-container">
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+        <div class="hole"></div>
+    </div>
+
+    <div id="score">Score: <span id="score-value">0</span></div>
+    <div id="timer">Time Left: <span id="timer-value">60</span> seconds</div>
+    <a class="main-a" href="/">Back To Home</a>
+    <a class="main-a a2" href="/ps5">Game Picker</a>
+
+    <script>
+        const holes = document.querySelectorAll('.hole')
+        const scoreDisplay = document.getElementById('score-value')
+        const timerDisplay = document.getElementById('timer-value')
+        let score = 0
+        let timer = 60
+
+        function randomHole() {
+            const index = Math.floor(Math.random() * holes.length)
+            return holes[index]
+        }
+
+        function peep() {
+            const hole = randomHole()
+            if (hole) {
+                hole.classList.add('mole')
+                setTimeout(() => {
+                    hole.classList.remove('mole')
+                    if (score < 10) {
+                        peep()
+                    } else {
+                        alert(`Congratulations! You have reached 10 points. Click OK to restart the game.`)
+                        location.reload()
+                    }
+                }, 2000)
+            }
+        }
+
+        holes.forEach(hole => {
+            hole.addEventListener('click', () => {
+                if (hole.classList.contains('mole')) {
+                    score++
+                    scoreDisplay.textContent = score
+                    hole.classList.remove('mole')
+                }
+            })
+        })
+
+        function countDown() {
+            timer--
+            timerDisplay.textContent = timer
+            if (timer === 0) {
+                if (score < 10) {
+                    alert(`Game over! Your score is ${score}. Try again!`)
+                    location.reload()
+                }
+            } else {
+                setTimeout(countDown, 1000)
+            }
+        }
+
+        peep()
+        countDown()
+    </script>
+</body>
+
+</html>
